@@ -1,8 +1,9 @@
-import { ChakraProvider as BaseChakraProvider, defaultSystem } from '@chakra-ui/react'
+import { ChakraProvider as BaseChakraProvider } from '@chakra-ui/react'
+import { system } from "@/config/theme.js";
 
 export function ChakraProvider({ children }) {
   return (
-    <BaseChakraProvider value={defaultSystem}>
+    <BaseChakraProvider value={system}>
       {children}
     </BaseChakraProvider>
   )
