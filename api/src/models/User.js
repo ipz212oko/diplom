@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 
 const User = sequelize.define('User', {
   id: {
@@ -58,15 +58,16 @@ const User = sequelize.define('User', {
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {
-        user.password = await bcrypt.hash(user.password, 10);
+        user.password = await argon2.hash(user.password);
       }
     },
     beforeUpdate: async (user) => {
       if (user.password) {
-        user.password = await bcrypt.hash(user.password, 10);
+        user.password = await argon2.hash(user.password);
       }
     },
   },
 });
 
 module.exports = User;
+

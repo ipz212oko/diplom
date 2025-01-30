@@ -1,13 +1,17 @@
 'use strict';
 
+const argon2 = require('argon2');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
+    const hashedPassword = await argon2.hash("admin");
+
     await queryInterface.bulkInsert('user', [
       {
         username: 'admin',
         email: 'admin@gmail.com',
-        password: 'admin',
+        password: hashedPassword,
         role: 'admin',
         file: null,
         image: null,
@@ -17,7 +21,7 @@ module.exports = {
     ]);
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('user', { email: 'admin@gmail.com' });
   },
 };
