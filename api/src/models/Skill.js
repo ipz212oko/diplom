@@ -20,6 +20,15 @@ const Skill = sequelize.define('Skill', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  rating: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+    validate: {
+      min: 0,
+      max: 5,
+    },
+  },
 }, {
   tableName: 'skill',
   timestamps: false,
