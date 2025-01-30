@@ -31,7 +31,7 @@ function NavLinks(props) {
 
 export function Header() {
   return (
-    <Box as="header" position="sticky" top={0} w="full" bg="white" zIndex={999}>
+    <Box as="header" position="sticky" top={0} w="full" bg="white" shadow="sm" zIndex={999}>
       <Container>
         <Flex py={4}>
           <NavLinks hideBelow="md" />
