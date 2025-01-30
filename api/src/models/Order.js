@@ -45,6 +45,8 @@ const Order = sequelize.define('Order', {
 }, {
   tableName: 'order',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 Status.hasMany(Order, {

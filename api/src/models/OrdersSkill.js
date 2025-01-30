@@ -21,6 +21,8 @@ const OrdersSkill = sequelize.define('OrderSkill', {
 }, {
   tableName: 'order_skill',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 Order.hasMany(OrdersSkill, {

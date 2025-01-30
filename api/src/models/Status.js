@@ -19,6 +19,8 @@ const Status = sequelize.define('Status', {
 }, {
   tableName: 'status',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 module.exports = Status;
