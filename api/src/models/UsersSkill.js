@@ -21,6 +21,8 @@ const UsersSkill = sequelize.define('UsersSkill', {
 }, {
   tableName: 'users_skill',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 UsersSkill.belongsTo(User, {

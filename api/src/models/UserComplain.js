@@ -21,6 +21,8 @@ const UserComplain = sequelize.define('UserComplain', {
 }, {
   tableName: 'user_complain',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 User.hasMany(UserComplain, {

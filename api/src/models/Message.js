@@ -29,6 +29,8 @@ const Message = sequelize.define('Message', {
 }, {
   tableName: 'message',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 User.hasMany(Message, {

@@ -19,6 +19,8 @@ const Complaint = sequelize.define('Complaint', {
 }, {
   tableName: 'complaint',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 module.exports = Complaint;

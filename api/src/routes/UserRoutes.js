@@ -40,7 +40,7 @@ router.post('/',  async (req, res) => {
           { expiresIn: '1h' }
         );
         res.cookie('token', token, { httpOnly: true,  maxAge: 3600000 });
-        res.status(201).json('registration success');
+        res.status(201).json({success:true});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

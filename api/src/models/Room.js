@@ -30,6 +30,8 @@ const Room = sequelize.define('Room', {
 }, {
   tableName: 'room',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 User.hasMany(Room, {

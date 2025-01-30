@@ -25,6 +25,8 @@ const OrderHistory = sequelize.define('OrderHistory', {
 }, {
   tableName: 'order_history',
   timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci',
 });
 
 Order.hasMany(OrderHistory, {
