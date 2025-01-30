@@ -81,12 +81,11 @@ const router = express.Router();
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post('/', async (req, res) => {
+
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await models.User.findOne({
-      where: { email }
-    });
+    const user = await models.User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -98,24 +97,40 @@ router.post('/', async (req, res) => {
     }
 
     const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      },
+      { id: user.id, username: user.username, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    res.status(200).json({
-      token
-    });
 
+    res.cookie('token', token, { httpOnly: true,  maxAge: 3600000 });
+    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
+/**
+ * @swagger
+ * /api/logout:
+ *   post:
+ *     summary: Logout user and clear authentication token
+ *     description: Logs out the user by clearing the authentication token stored in cookies.
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Logout successful"
+ */
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: 'Logout successful' });
+});
 
 module.exports = router;
