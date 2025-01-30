@@ -11,11 +11,9 @@ const config = defineConfig({
     "*": {
       fontFamily: "'Montserrat', sans-serif",
     },
-    "html, body": {
-      height: "100dvh",
-    },
     "#root": {
-      height: "100%",
+      minH: "100dvh",
+      bg: "#fbfbfd"
     }
   },
   theme: {
