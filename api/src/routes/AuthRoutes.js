@@ -41,9 +41,6 @@ const router = express.Router();
  *                     id:
  *                       type: integer
  *                       example: 1
- *                     username:
- *                       type: string
- *                       example: "john_doe"
  *                     email:
  *                       type: string
  *                       example: "user@example.com"
@@ -97,7 +94,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
