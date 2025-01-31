@@ -6,19 +6,29 @@ const linkRecipe = defineRecipe({
   },
 })
 
+const headingRecipe = defineRecipe({
+  base: {
+    fontFamily: "inherit",
+  },
+})
+
 const config = defineConfig({
   globalCss: {
     "*": {
-      fontFamily: "'Montserrat', sans-serif",
+      "--global-font-body": "'Montserrat', sans-serif"
+    },
+    "html, body": {
+      h: "100%",
     },
     "#root": {
-      minH: "100dvh",
+      h: "100%",
       bg: "#fbfbfd"
     }
   },
   theme: {
     recipes: {
       link: linkRecipe,
+      heading: headingRecipe,
     },
   },
 })

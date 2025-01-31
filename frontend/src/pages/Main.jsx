@@ -7,7 +7,7 @@ import {
   Box,
   Text,
   Heading,
-  Center
+  Center, Container
 } from "@chakra-ui/react";
 import { Link } from "react-router";
 import ordersImage from "@/assets/images/orders.svg";
@@ -38,50 +38,44 @@ const popularSkills = [
 
 export function Main() {
   return (
-    <>
+    <Container>
       <HStack gap={4} py={10}>
-        <Button
-          as={Link}
-          to="/creators"
-          variant="plain"
-          display="flex"
-          flex="1"
-          flexDirection="column"
-          h="auto"
-          py={20}
-          px={4}
-          fontSize="xl"
-          fontWeight="bold"
-          bg="white"
-          shadow="md"
-          _hover={{
-            shadow: "xl",
-          }}
-        >
-          <Image width={250} src={ordersImage} alt="Замовникам" />
-          Замовникам
-        </Button>
-        <Button
-          as={Link}
-          to="/orders"
-          variant="plain"
-          display="flex"
-          flex="1"
-          flexDirection="column"
-          h="auto"
-          py={20}
-          px={4}
-          fontSize="xl"
-          fontWeight="bold"
-          bg="white"
-          shadow="md"
-          _hover={{
-            shadow: "xl",
-          }}
-        >
-          <Image width={250} src={creatorsImage} alt="Виконавцям" />
-          Виконавцям
-        </Button>
+        <Card.Root as={Link} to="/creators" flex="1">
+          <Card.Body
+            as={Center}
+            gap={4}
+            p={4}
+            py={20}
+            px={4}
+            fontSize="xl"
+            fontWeight="bold"
+            transition="shadow"
+            _hover={{
+              shadow: "xl",
+            }}
+          >
+            <Image width={250} src={ordersImage} alt="Замовникам" />
+            Замовникам
+          </Card.Body>
+        </Card.Root>
+        <Card.Root as={Link} to="/orders" flex="1">
+          <Card.Body
+            as={Center}
+            gap={4}
+            p={4}
+            py={20}
+            px={4}
+            fontSize="xl"
+            fontWeight="bold"
+            transition="shadow"
+            _hover={{
+              shadow: "xl",
+            }}
+          >
+            <Image width={250} src={creatorsImage} alt="Виконавцям" />
+            Виконавцям
+          </Card.Body>
+        </Card.Root>
       </HStack>
       <Box py={10}>
         <Heading size="4xl" fontFamily="inherit" textAlign="center">Популярні напрямки</Heading>
@@ -96,6 +90,6 @@ export function Main() {
           ))}
         </SimpleGrid>
       </Box>
-    </>
+    </Container>
   )
 }

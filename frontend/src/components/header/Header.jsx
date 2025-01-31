@@ -54,7 +54,7 @@ export function Header() {
           </DrawerRoot>
           <HStack ml="auto">
             <Button as={Link} to="/login" fontSize="md" variant="ghost">Вхід</Button>
-            <Button as={Link} to="/register" fontSize="md" colorPalette="blue">Реєстрація</Button>
+            <Button as={Link} to="/sign-up" fontSize="md" colorPalette="blue">Реєстрація</Button>
           </HStack>
         </Flex>
       </Container>
