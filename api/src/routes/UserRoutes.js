@@ -17,7 +17,9 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               name:
+ *                 type: string
+ *               surname:
  *                 type: string
  *               email:
  *                 type: string
@@ -35,7 +37,7 @@ router.post('/',  async (req, res) => {
     try {
         const user = await models.User.create(req.body);
         const token = jwt.sign(
-          { id: user.id, username: user.username, email: user.email, role: user.role },
+          { id: user.id, email: user.email, role: user.role },
           process.env.JWT_SECRET,
           { expiresIn: '1h' }
         );
