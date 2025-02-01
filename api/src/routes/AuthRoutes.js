@@ -20,10 +20,10 @@ const router = express.Router();
  *             properties:
  *               email:
  *                 type: string
- *                 example: "user@gmail.com"
+ *                 example: "admin@gmail.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "admin"
  *     responses:
  *       200:
  *         description: Successful login, returns a JWT token and user details
@@ -78,7 +78,6 @@ const router = express.Router();
  *                   type: string
  *                   example: "Internal server error"
  */
-
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -99,35 +98,12 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.cookie('token', token, { httpOnly: true,  maxAge: 3600000 });
-    res.status(200).json({ message: 'Login successful' });
+    res.status(200).json({ message: 'Login successful',token:token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-/**
- * @swagger
- * /api/logout:
- *   post:
- *     summary: Logout user and clear authentication token
- *     description: Logs out the user by clearing the authentication token stored in cookies.
- *     responses:
- *       200:
- *         description: Logout successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Logout successful"
- */
-router.post('/logout', (req, res) => {
-  res.clearCookie('token');
-  res.status(200).json({ message: 'Logout successful' });
-});
-
 module.exports = router;
+

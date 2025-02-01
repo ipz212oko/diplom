@@ -13,7 +13,7 @@ services:
     build:
       context: ./api
       dockerfile: ../docker/api/Dockerfile
-    command: ["sh", "-c", "npm install && node --env-file=src/.env src/server.js"]
+    command: [ "sh", "-c", "npm install && npm run dev" ]
     volumes:
       - ./api:/app
     networks:
