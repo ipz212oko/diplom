@@ -41,8 +41,8 @@ router.post('/',  async (req, res) => {
           process.env.JWT_SECRET,
           { expiresIn: '1h' }
         );
-        res.cookie('token', token, { httpOnly: true,  maxAge: 3600000 });
-        res.status(201).json({success:true});
+
+        res.status(201).json({success:true,token:token});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -61,6 +61,42 @@ router.get('/',authMiddleware, async (req, res) => {
     try {
         const users = await models.User.findAll();
         res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Get current user information from JWT
+ *     responses:
+ *       200:
+ *         description: Current user details
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await models.User.findOne({ where: { email: decoded.email } });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userInfo = {
+            id: user.id,
+            name: user.name,
+            surname: user.surname,
+            role: user.role,
+            email: user.email
+        };
+
+        res.status(200).json(userInfo);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -148,7 +184,6 @@ router.patch('/:id',authMiddleware,  async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
 
 /**
  * @swagger
