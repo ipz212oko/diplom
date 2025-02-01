@@ -2,13 +2,24 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const HelloRoutes = require('./routes/HelloRoutes');
-const AuthRoutes = require('./routes/AuthRoutes');
-const UserRoutes = require('./routes/UserRoutes');
-const SkillRoutes = require('./routes/SkillRoutes');
-const UsersSkillsRoutes = require('./routes/UsersSkillsRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./utils/swagger');
+const {
+    HelloRoutes,
+    AuthRoutes,
+    UserRoutes,
+    SkillRoutes,
+    UsersSkillsRoutes,
+    ComplaintRoutes,
+    UserComplainRoutes,
+    StatusRoutes,
+    OrderRoutes,
+    OrdersSkillRoutes,
+    OrderHistoryRoutes,
+    RoomsRoutes,
+    CommentRoutes,
+    MessagesRoutes
+} = require("./routes");
 
 const app = express();
 
@@ -19,10 +30,20 @@ app.use(cors({
     credentials: true,
 }));
 app.use('/api', HelloRoutes);
-app.use('/api', AuthRoutes);
+app.use('/api/login', AuthRoutes);
 app.use('/api/users', UserRoutes);
 app.use('/api/skills', SkillRoutes);
 app.use('/api/users-skills', UsersSkillsRoutes);
+app.use('/api/complaints', ComplaintRoutes);
+app.use('/api/user-complaints', UserComplainRoutes);
+app.use('/api/statuses', StatusRoutes);
+app.use('/api/orders', OrderRoutes);
+app.use('/api/orders-skills', OrdersSkillRoutes);
+app.use('/api/order-history', OrderHistoryRoutes);
+app.use('/api/rooms', RoomsRoutes);
+app.use('/api/comments', CommentRoutes);
+app.use('/api/messages', MessagesRoutes);
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = app;
