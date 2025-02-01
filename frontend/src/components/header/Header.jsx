@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/drawer";
 import { LuMenu } from "react-icons/lu";
 import { Link } from "react-router";
+import { useAuth } from "@/providers/AuthProvider.jsx";
+import { Logout } from "@/components/ui/logout.jsx";
 
 function NavLinks(props) {
   return (
@@ -30,6 +32,8 @@ function NavLinks(props) {
 }
 
 export function Header() {
+  const { user } = useAuth();
+
   return (
     <Box as="header" position="sticky" top={0} w="full" bg="white" shadow="sm" zIndex={999}>
       <Container>
@@ -53,8 +57,14 @@ export function Header() {
             </DrawerContent>
           </DrawerRoot>
           <HStack ml="auto">
-            <Button as={Link} to="/login" fontSize="md" variant="ghost">Вхід</Button>
-            <Button as={Link} to="/sign-up" fontSize="md" colorPalette="blue">Реєстрація</Button>
+            {user ? (
+              <Logout colorPalette="blue" />
+            ) : (
+              <>
+                <Button as={Link} to="/login" fontSize="md" variant="ghost">Вхід</Button>
+                <Button as={Link} to="/sign-up" fontSize="md" colorPalette="blue">Реєстрація</Button>
+              </>
+            )}
           </HStack>
         </Flex>
       </Container>

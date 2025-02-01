@@ -1,5 +1,6 @@
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
+import { Button } from "@chakra-ui/react";
 
 export function Form({ children, onSubmit, validation, options = {}, ...rest }) {
   if(validation) {
@@ -17,4 +18,12 @@ export function Form({ children, onSubmit, validation, options = {}, ...rest }) 
       </form>
     </FormProvider>
   );
+}
+
+export function Submit({ children, ...rest }) {
+  const { isSubmitting } = useFormState();
+
+  return (
+    <Button type="submit" disabled={isSubmitting} {...rest}>{children}</Button>
+  )
 }

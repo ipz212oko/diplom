@@ -1,10 +1,12 @@
 import * as yup from "yup"
-import { Center, Card, Heading, Button, Stack } from "@chakra-ui/react";
+import { Center, Card, Heading, Stack } from "@chakra-ui/react";
 import { SegmentedControl } from "@/components/ui/segmented-control.jsx";
-import { InputField } from "@/components/ui/field.jsx";
-import { Form } from "@/components/ui/form.jsx";
+import { InputField, PasswordField } from "@/components/ui/field.jsx";
+import { Form, Submit } from "@/components/ui/form.jsx";
 import { validationMessage } from "@/config/validationMessage.js";
 import { FieldController } from "@/components/ui/field-controller.jsx";
+import { useAuth } from "@/providers/AuthProvider.jsx";
+import { useNavigate } from "react-router";
 
 const { REQUIRED, INVALID_EMAIL } = validationMessage;
 
@@ -19,14 +21,31 @@ const validationSchema = yup
   .required()
 
 export function SignUp() {
-  const onSubmit = data => {
-    console.log(data);
+  const navigate = useNavigate();
+  const { register } = useAuth();
+
+  const onSubmit = async (userData) => {
+    console.log(userData);
+    try {
+      await register(userData);
+      navigate("/");
+    } catch(error) {
+      console.error("Register failed", error);
+    }
   }
 
   return (
     <Center flex="1">
       <Card.Root size="md" maxW="400px" w="full">
-        <Form onSubmit={onSubmit} validation={validationSchema}>
+        <Form
+          options={{
+            defaultValues: {
+              role: "creator"
+            }
+          }}
+          onSubmit={onSubmit}
+          validation={validationSchema}
+        >
           <Card.Header as={Heading} textAlign="center" size="3xl">Реєстрація</Card.Header>
           <Card.Body>
               <Stack spacing={2} alignItems="center">
@@ -49,11 +68,11 @@ export function SignUp() {
                 <InputField label="Ім'я" name="name" />
                 <InputField label="Прізвище" name="surname" />
                 <InputField label="Пошта" name="email" />
-                <InputField label="Пароль" name="password" />
+                <PasswordField label="Пароль" name="password" />
               </Stack>
           </Card.Body>
           <Card.Footer justifyContent="center">
-            <Button type="submit" colorPalette="blue">Зареєструватися</Button>
+            <Submit colorPalette="blue">Зареєструватися</Submit>
           </Card.Footer>
         </Form>
       </Card.Root>
