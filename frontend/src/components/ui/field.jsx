@@ -1,6 +1,7 @@
 import { Field as ChakraField, Input } from "@chakra-ui/react";
 import { useFormContext } from 'react-hook-form';
 import * as React from 'react'
+import { PasswordInput } from "@/components/ui/password-input.jsx";
 
 export const Field = React.forwardRef(function Field(props, ref) {
   const { label, children, helperText, errorText, optionalText, ...rest } =
@@ -22,13 +23,16 @@ export const Field = React.forwardRef(function Field(props, ref) {
   )
 })
 
-export const InputField = function ({ label, type = 'text',  name, ...rest }) {
+export const FormField = function ({ label, type = 'text',  name, component: Component, ...rest }) {
   const { register, formState: { errors } } = useFormContext();
   const error = errors[name]?.message;
 
   return (
     <Field label={label} errorText={error}>
-      <Input {...register(name)} {...rest} />
+      <Component {...register(name)} {...rest} />
     </Field>
   )
 }
+
+export const InputField = (props) => <FormField component={Input} {...props}/>;
+export const PasswordField = (props) => <FormField component={PasswordInput} {...props}/>;
