@@ -78,7 +78,7 @@ const router = express.Router();
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post('/login', async (req, res) => {
+router.post('/', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await models.User.findOne({ where: { email } });
