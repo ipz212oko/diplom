@@ -16,10 +16,30 @@ const Order = sequelize.define('Order', {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Назва не може бути порожньою',
+      },
+      notNull: {
+        msg: 'Назва не може бути порожньою',
+      },
+    },
   },
   price: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Ціна не може бути порожньою',
+      },
+      notNull: {
+        msg: 'Ціна не може бути порожньою',
+      },
+      min: {
+        args: [0],
+        msg: 'Ціна не може бути меншою за 0',
+      },
+    },
   },
   region: {
     type: DataTypes.STRING,
@@ -34,8 +54,17 @@ const Order = sequelize.define('Order', {
     allowNull: true,
     defaultValue: 0,
     validate: {
-      min: 0,
-      max: 5,
+      isInt: {
+        msg: 'Рейтинг має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'Рейтинг не може бути меншим за 0',
+      },
+      max: {
+        args: [5],
+        msg: 'Рейтинг не може бути більшим за 5',
+      },
     },
   },
   description: {

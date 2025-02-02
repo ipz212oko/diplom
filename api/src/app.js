@@ -1,11 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./utils/swagger');
+const jsonErrorHandler = require('./middlewares/errorHandler');
 const {
-    HelloRoutes,
     AuthRoutes,
     UserRoutes,
     SkillRoutes,
@@ -24,12 +23,13 @@ const {
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(express.json());
 app.use(cors({
     origin: 'http://localhost',
     credentials: true,
 }));
-app.use('/api', HelloRoutes);
+app.use(jsonErrorHandler);
+
 app.use('/api/login', AuthRoutes);
 app.use('/api/users', UserRoutes);
 app.use('/api/skills', SkillRoutes);
@@ -43,7 +43,6 @@ app.use('/api/order-history', OrderHistoryRoutes);
 app.use('/api/rooms', RoomsRoutes);
 app.use('/api/comments', CommentRoutes);
 app.use('/api/messages', MessagesRoutes);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 module.exports = app;

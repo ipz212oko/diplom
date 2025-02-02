@@ -20,6 +20,14 @@ const Comment = sequelize.define('Comment', {
   text: {
     type: DataTypes.TEXT,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'текст не може бути порожнім',
+      },
+      notNull: {
+        msg: 'текст обовʼязкове',
+      },
+    },
   },
   sendtime: {
     type: DataTypes.DATEONLY,

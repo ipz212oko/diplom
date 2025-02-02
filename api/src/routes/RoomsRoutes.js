@@ -73,13 +73,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Room details
  *       404:
- *         description: Room not found
+ *         description: Кімната не знайдена
  */
 router.get('/:id', async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: 'Кімната не знайдена' });
     }
     res.status(200).json(room);
   } catch (error) {
@@ -120,13 +120,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Room not found
+ *         description: Кімната не знайдена
  */
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: 'Кімната не знайдена' });
     }
 
     const updatedFields = {};
@@ -158,13 +158,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Room deleted successfully
  *       404:
- *         description: Room not found
+ *         description: Кімната не знайдена
  */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: 'Кімната не знайдена' });
     }
     await room.destroy();
     res.status(204).send();

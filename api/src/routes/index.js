@@ -1,5 +1,4 @@
 
-const HelloRoutes = require('./HelloRoutes');
 const AuthRoutes = require('./AuthRoutes');
 const UserRoutes = require('./UserRoutes');
 const SkillRoutes = require('./SkillRoutes');
@@ -16,7 +15,6 @@ const MessagesRoutes = require('./MessagesRoutes');
 
 
 module.exports = {
-  HelloRoutes,
   AuthRoutes,
   UserRoutes,
   SkillRoutes,

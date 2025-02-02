@@ -25,6 +25,14 @@ const Message = sequelize.define('Message', {
   text: {
     type: DataTypes.TEXT,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'текст не може бути порожнім',
+      },
+      notNull: {
+        msg: 'текст обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'message',

@@ -11,6 +11,14 @@ const Skill = sequelize.define('Skill', {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Назва не може бути порожньою',
+      },
+      notNull: {
+        msg: 'Назва не може бути порожньою',
+      },
+    },
   },
   image: {
     type: DataTypes.TEXT,
@@ -25,8 +33,17 @@ const Skill = sequelize.define('Skill', {
     allowNull: true,
     defaultValue: 0,
     validate: {
-      min: 0,
-      max: 5,
+      isInt: {
+        msg: 'Рейтинг має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'Рейтинг не може бути меншим за 0',
+      },
+      max: {
+        args: [5],
+        msg: 'Рейтинг не може бути більшим за 5',
+      },
     },
   },
 }, {

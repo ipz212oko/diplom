@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -26,7 +27,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const status = await models.Status.create(req.body);
     res.status(201).json({ success: true });
@@ -44,7 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of statuses
  */
-router.get('/', async (req, res) => {
+router.get('/',authMiddleware, async (req, res) => {
   try {
     const statuses = await models.Status.findAll();
     res.status(200).json(statuses);
@@ -69,13 +70,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Status details
  *       404:
- *         description: Status not found
+ *         description: Статус не знайдено
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id',authMiddleware, async (req, res) => {
   try {
     const status = await models.Status.findByPk(req.params.id);
     if (!status) {
-      return res.status(404).json({ message: 'Status not found' });
+      return res.status(404).json({ message: 'Статус не знайдено' });
     }
     res.status(200).json(status);
   } catch (error) {
@@ -112,13 +113,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Status not found
+ *         description: Статус не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const status = await models.Status.findByPk(req.params.id);
     if (!status) {
-      return res.status(404).json({ message: 'Status not found' });
+      return res.status(404).json({ message: 'Статус не знайдено' });
     }
 
     const updatedFields = {};
@@ -148,13 +149,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Status deleted successfully
  *       404:
- *         description: Status not found
+ *         description: Статус не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const status = await models.Status.findByPk(req.params.id);
     if (!status) {
-      return res.status(404).json({ message: 'Status not found' });
+      return res.status(404).json({ message: 'Статус не знайдено' });
     }
     await status.destroy();
     res.status(204).send();

@@ -74,13 +74,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Message details
  *       404:
- *         description: Message not found
+ *         description: Повідомлення не знайдено
  */
 router.get('/:id', async (req, res) => {
   try {
     const message = await models.Message.findByPk(req.params.id);
     if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
+      return res.status(404).json({ message: 'Повідомлення не знайдено' });
     }
     res.status(200).json(message);
   } catch (error) {
@@ -115,13 +115,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Message not found
+ *         description: Повідомлення не знайдено
  */
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const message = await models.Message.findByPk(req.params.id);
     if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
+      return res.status(404).json({ message: 'Повідомлення не знайдено' });
     }
 
     await message.update(req.body);
@@ -147,13 +147,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Message deleted successfully
  *       404:
- *         description: Message not found
+ *         description: Повідомлення не знайдено
  */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const message = await models.Message.findByPk(req.params.id);
     if (!message) {
-      return res.status(404).json({ message: 'Message not found' });
+      return res.status(404).json({ message: 'Повідомлення не знайдено' });
     }
     await message.destroy();
     res.status(204).send();

@@ -47,7 +47,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of order history entries
  */
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const orderHistories = await models.OrderHistory.findAll();
     res.status(200).json(orderHistories);
@@ -72,13 +72,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Order history entry details
  *       404:
- *         description: Order history entry not found
+ *         description: Запис в історії замовлень не знайдено
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {
-      return res.status(404).json({ message: 'Order history entry not found' });
+      return res.status(404).json({ message: 'Запис в історії замовлень не знайдено' });
     }
     res.status(200).json(orderHistory);
   } catch (error) {
@@ -109,28 +109,24 @@ router.get('/:id', async (req, res) => {
  *                 type: integer
  *               status_id:
  *                 type: integer
- *               time:
- *                 type: string
- *                 format: date
  *     responses:
  *       200:
  *         description: Order history entry updated successfully
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Order history entry not found
+ *         description: Запис в історії замовлень не знайдено
  */
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {
-      return res.status(404).json({ message: 'Order history entry not found' });
+      return res.status(404).json({ message: 'Запис в історії замовлень не знайдено' });
     }
 
     const updatedFields = {};
     if (req.body.order_id) updatedFields.order_id = req.body.order_id;
     if (req.body.status_id) updatedFields.status_id = req.body.status_id;
-    if (req.body.time) updatedFields.time = req.body.time;
 
     await orderHistory.update(updatedFields);
     res.status(200).json(orderHistory);
@@ -155,13 +151,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Order history entry deleted successfully
  *       404:
- *         description: Order history entry not found
+ *         description: Запис в історії замовлень не знайдено
  */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {
-      return res.status(404).json({ message: 'Order history entry not found' });
+      return res.status(404).json({ message: 'Запис в історії замовлень не знайдено' });
     }
     await orderHistory.destroy();
     res.status(204).send();
