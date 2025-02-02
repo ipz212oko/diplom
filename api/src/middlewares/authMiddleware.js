@@ -6,7 +6,7 @@ const authMiddleware = async (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+        return res.status(401).json({ message: 'Жетон не надано' });
     }
 
     try {
@@ -14,13 +14,13 @@ const authMiddleware = async (req, res, next) => {
         const user = await models.User.findOne({ where: { email: decoded.email } });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Пошта або пароль вказано невірно' });
         }
 
         req.user = user;
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Invalid or expired token' });
+        return res.status(401).json({ message: 'Недійсний або прострочений маркер' });
     }
 };
 

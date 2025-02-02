@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -69,13 +70,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Complaint details
  *       404:
- *         description: Complaint not found
+ *         description: Скарги не знайдено
  */
 router.get('/:id', async (req, res) => {
   try {
     const complaint = await models.Complaint.findByPk(req.params.id);
     if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
+      return res.status(404).json({ message: 'Скарги не знайдено' });
     }
     res.status(200).json(complaint);
   } catch (error) {
@@ -112,13 +113,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Complaint not found
+ *         description: Скарги не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const complaint = await models.Complaint.findByPk(req.params.id);
     if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
+      return res.status(404).json({ message: 'Скарги не знайдено' });
     }
 
     const updatedFields = {};
@@ -148,13 +149,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Complaint deleted successfully
  *       404:
- *         description: Complaint not found
+ *         description: Скарги не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const complaint = await models.Complaint.findByPk(req.params.id);
     if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
+      return res.status(404).json({ message: 'Скарги не знайдено' });
     }
     await complaint.destroy();
     res.status(204).send();

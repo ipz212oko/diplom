@@ -1,7 +1,8 @@
 const express = require('express');
-const authMiddleware = require("../middlewares/authMiddleware");
-const { models } = require("../models");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
+const checkUserIdMiddleware = require("../middlewares/checkUserIdMiddleware");
+const { models } = require("../models");
 
 const router = express.Router();
 
@@ -27,13 +28,15 @@ const router = express.Router();
  *                 type: string
  *               role:
  *                 type: string
+ *                 default: customer
  *     responses:
  *       201:
  *         description: User created successfully
  *       400:
  *         description: Bad Request
  */
-router.post('/',  async (req, res) => {
+
+router.post('/', async (req, res) => {
     try {
         const user = await models.User.create(req.body);
         const token = jwt.sign(
@@ -42,9 +45,14 @@ router.post('/',  async (req, res) => {
           { expiresIn: '1h' }
         );
 
-        res.status(201).json({success:true,token:token});
+        res.status(201).json({ success: true, token: token });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (error.name === 'SequelizeValidationError') {
+            const validationErrors = error.errors.map(err => err.message);
+            res.status(400).json({ error: 'Validation error', details: validationErrors });
+        } else {
+            res.status(400).json({ error: error.message });
+        }
     }
 });
 
@@ -85,7 +93,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 
         const user = await models.User.findOne({ where: { email: decoded.email } });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Користувача не знайдено' });
         }
 
         const userInfo = {
@@ -118,13 +126,13 @@ router.get('/me', authMiddleware, async (req, res) => {
  *       200:
  *         description: User details
  *       404:
- *         description: User not found
+ *         description: Користувача не знайдено
  */
 router.get('/:id',authMiddleware, async (req, res) => {
     try {
         const user = await models.User.findByPk(req.params.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Користувача не знайдено' });
         }
         res.status(200).json(user);
     } catch (error) {
@@ -153,30 +161,41 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *             properties:
  *               name:
  *                 type: string
+ *               surname:
+ *                 type: string
  *               email:
  *                 type: string
  *               password:
  *                 type: string
+ *               description:
+ *                 type: string
+ *               rating:
+ *                 type: number
+ *                 format: float
  *     responses:
  *       200:
  *         description: User updated successfully
  *       400:
  *         description: Invalid data
  *       404:
- *         description: User not found
+ *         description: Користувача не знайдено
  */
-router.patch('/:id',authMiddleware,  async (req, res) => {
+
+router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
     try {
         const user = await models.User.findByPk(req.params.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Користувача не знайдено' });
         }
 
 
         const updatedFields = {};
         if (req.body.name) updatedFields.name = req.body.name;
+        if (req.body.surname) updatedFields.surname = req.body.surname;
         if (req.body.email) updatedFields.email = req.body.email;
         if (req.body.password) updatedFields.password = req.body.password;
+        if (req.body.description) updatedFields.description = req.body.description;
+        if (req.body.rating) updatedFields.rating = req.body.rating;
 
         await user.update(updatedFields);
         res.status(200).json(user);
@@ -201,13 +220,13 @@ router.patch('/:id',authMiddleware,  async (req, res) => {
  *       204:
  *         description: User deleted successfully
  *       404:
- *         description: User not found
+ *         description: Користувача не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,checkUserIdMiddleware, async (req, res) => {
     try {
         const user = await models.User.findByPk(req.params.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'Користувача не знайдено' });
         }
         await user.destroy();
         res.status(204).send();

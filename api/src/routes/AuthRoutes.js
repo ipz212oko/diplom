@@ -80,16 +80,19 @@ const router = express.Router();
  */
 router.post('/', async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(404).json({ message: 'Пошта або пароль вказано невірно' });
+  }
   try {
     const user = await models.User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'Пошта або пароль вказано невірно' });
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(404).json({ message: 'Пошта або пароль вказано невірно' });
     }
 
     const token = jwt.sign(
@@ -98,9 +101,8 @@ router.post('/', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.status(200).json({ message: 'Login successful',token:token });
+    res.status(200).json({ message: 'Вхід успішний',token:token });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

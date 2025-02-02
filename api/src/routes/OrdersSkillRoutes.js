@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -44,7 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of order-skill relations
  */
-router.get('/', async (req, res) => {
+router.get('/',authMiddleware, async (req, res) => {
   try {
     const orderSkills = await models.OrdersSkill.findAll();
     res.status(200).json(orderSkills);
@@ -71,11 +72,11 @@ router.get('/', async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware,async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
-      return res.status(404).json({ message: 'Order-skill relation not found' });
+      return res.status(404).json({ message: 'Відношення Замовлення-навички не знайдено' });
     }
     res.status(200).json(orderSkill);
   } catch (error) {
@@ -114,11 +115,11 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
-      return res.status(404).json({ message: 'Order-skill relation not found' });
+      return res.status(404).json({ message: 'Відношення Замовлення-навички не знайдено' });
     }
 
     const updatedFields = {};
@@ -150,11 +151,11 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
-      return res.status(404).json({ message: 'Order-skill relation not found' });
+      return res.status(404).json({ message: 'Відношення Замовлення-навички не знайдено' });
     }
     await orderSkill.destroy();
     res.status(204).send();

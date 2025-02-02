@@ -31,9 +31,13 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const skill = await models.Skill.findByPk(req.body.skill_id);
     if (!skill) {
-      return res.status(400).json({ error: 'Skill not found' });
+      return res.status(400).json({ error: 'Навичка не знайдена' });
     }
-    const usersSkill = await models.UsersSkill.create({ user_id:req.body.user_id, skill_id:skill.id });
+    const user = await models.Skill.findByPk(req.body.user_id);
+    if (!user) {
+      return res.status(400).json({ error: 'Користувача не знайдено' });
+    }
+    const usersSkill = await models.UsersSkill.create({ user_id:user.id, skill_id:skill.id });
 
     res.status(201).json({success:true});
   } catch (error) {
@@ -81,7 +85,7 @@ router.get('/:id', async (req, res) => {
   try {
     const usersSkill = await models.UsersSkill.findByPk(req.params.id);
     if (!usersSkill) {
-      return res.status(404).json({ message: 'UsersSkill not found' });
+      return res.status(404).json({ message: 'UsersSkill не знайдено' });
     }
     res.status(200).json(usersSkill);
   } catch (error) {
@@ -118,13 +122,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: UsersSkill not found
+ *         description: UsersSkill не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,async (req, res) => {
   try {
     const usersSkill = await models.UsersSkill.findByPk(req.params.id);
     if (!usersSkill) {
-      return res.status(404).json({ message: 'UsersSkill not found' });
+      return res.status(404).json({ message: 'UsersSkill не знайдено' });
     }
 
     const updatedFields = {};
@@ -154,13 +158,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: UsersSkill deleted successfully
  *       404:
- *         description: UsersSkill not found
+ *         description: UsersSkill не знайдено
  */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const usersSkill = await models.UsersSkill.findByPk(req.params.id);
     if (!usersSkill) {
-      return res.status(404).json({ message: 'UsersSkill not found' });
+      return res.status(404).json({ message: 'UsersSkill не знайдено' });
     }
     await usersSkill.destroy();
     res.status(204).send();

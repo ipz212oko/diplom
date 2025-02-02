@@ -12,24 +12,57 @@ const User = sequelize.define('User', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Імʼя не може бути порожнім',
+      },
+      notNull: {
+        msg: 'Імʼя обовʼязкове',
+      },
+    },
   },
   surname: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Прізвище не може бути порожнім',
+      },
+      notNull: {
+        msg: 'Прізвище обовʼязкове',
+      },
+    },
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      msg: 'Email має бути унікальним'
+    },
     validate: {
+      notEmpty: {
+        msg: 'Email не може бути порожнім',
+      },
       isEmail: {
-        msg: 'Must be a valid email address',
+        msg: 'Введіть коректний email',
       },
     },
   },
   role: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Роль не може бути порожньою',
+      },
+      notNull: {
+        msg: 'Роль не може бути порожньою',
+      },
+      isIn: {
+        args: [['creator', 'customer']],
+        msg: 'Недопустима роль. Доступні варіанти: creator, customer',
+      },
+    },
   },
   file: {
     type: DataTypes.TEXT,
@@ -48,13 +81,31 @@ const User = sequelize.define('User', {
     allowNull: true,
     defaultValue: 0,
     validate: {
-      min: 0,
-      max: 5,
+      isInt: {
+        msg: 'Рейтинг має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'Рейтинг не може бути меншим за 0',
+      },
+      max: {
+        args: [5],
+        msg: 'Рейтинг не може бути більшим за 5',
+      },
     },
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'Пароль не може бути порожнім',
+      },
+      len: {
+        args: [4, 100],
+        msg: 'Пароль має містити щонайменше 4 символів',
+      },
+    },
   },
 }, {
   tableName: 'user',
@@ -69,7 +120,10 @@ const User = sequelize.define('User', {
     },
     beforeUpdate: async (user) => {
       if (user.password) {
-        user.password = await argon2.hash(user.password);
+        const isHashed = user.password.startsWith('$argon2');
+        if (!isHashed) {
+          user.password = await argon2.hash(user.password);
+        }
       }
     },
   },

@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -30,7 +31,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const skill = await models.Skill.create(req.body);
     res.status(201).json({success:true});
@@ -73,13 +74,13 @@ router.get('/',  async (req, res) => {
  *       200:
  *         description: Skill details
  *       404:
- *         description: Skill not found
+ *         description: Навички не знайдено
  */
 router.get('/:id', async (req, res) => {
   try {
     const skill = await models.Skill.findByPk(req.params.id);
     if (!skill) {
-      return res.status(404).json({ message: 'Skill not found' });
+      return res.status(404).json({ message: 'Навички не знайдено' });
     }
     res.status(200).json(skill);
   } catch (error) {
@@ -108,8 +109,6 @@ router.get('/:id', async (req, res) => {
  *             properties:
  *               title:
  *                 type: string
- *               image:
- *                 type: string
  *               description:
  *                 type: string
  *               rating:
@@ -120,18 +119,17 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Skill not found
+ *         description: Навички не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const skill = await models.Skill.findByPk(req.params.id);
     if (!skill) {
-      return res.status(404).json({ message: 'Skill not found' });
+      return res.status(404).json({ message: 'Навички не знайдено' });
     }
 
     const updatedFields = {};
     if (req.body.title) updatedFields.title = req.body.title;
-    if (req.body.image) updatedFields.image = req.body.image;
     if (req.body.description) updatedFields.description = req.body.description;
     if (req.body.rating) updatedFields.rating = req.body.rating;
 
@@ -158,13 +156,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Skill deleted successfully
  *       404:
- *         description: Skill not found
+ *         description: Навички не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const skill = await models.Skill.findByPk(req.params.id);
     if (!skill) {
-      return res.status(404).json({ message: 'Skill not found' });
+      return res.status(404).json({ message: 'Навички не знайдено' });
     }
     await skill.destroy();
     res.status(204).send();

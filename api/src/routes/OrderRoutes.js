@@ -79,13 +79,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: Order details
  *       404:
- *         description: Order not found
+ *         description: Замовлення не знайдено
  */
 router.get('/:id', async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: 'Замовлення не знайдено' });
     }
     res.status(200).json(order);
   } catch (error) {
@@ -132,13 +132,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Order not found
+ *         description: Замовлення не знайдено
  */
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: 'Замовлення не знайдено' });
     }
 
     const updatedFields = {};
@@ -173,13 +173,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: Order deleted successfully
  *       404:
- *         description: Order not found
+ *         description: Замовлення не знайдено
  */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: 'Замовлення не знайдено' });
     }
     await order.destroy();
     res.status(204).send();

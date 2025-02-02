@@ -1,5 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -44,7 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of user complaint relations
  */
-router.get('/', async (req, res) => {
+router.get('/',authMiddleware, async (req, res) => {
   try {
     const userComplaints = await models.UserComplain.findAll();
     res.status(200).json(userComplaints);
@@ -69,13 +70,13 @@ router.get('/', async (req, res) => {
  *       200:
  *         description: User complaint relation details
  *       404:
- *         description: User complaint relation not found
+ *         description: Звязок зі скаргою користувача не знайдено
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id',authMiddleware, async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {
-      return res.status(404).json({ message: 'User complaint relation not found' });
+      return res.status(404).json({ message: 'Звязок зі скаргою користувача не знайдено' });
     }
     res.status(200).json(userComplain);
   } catch (error) {
@@ -112,13 +113,13 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Invalid data
  *       404:
- *         description: User complaint relation not found
+ *         description: Звязок зі скаргою користувача не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {
-      return res.status(404).json({ message: 'User complaint relation not found' });
+      return res.status(404).json({ message: 'Звязок зі скаргою користувача не знайдено' });
     }
 
     const updatedFields = {};
@@ -148,13 +149,13 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       204:
  *         description: User complaint relation deleted successfully
  *       404:
- *         description: User complaint relation not found
+ *         description: Звязок зі скаргою користувача не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {
-      return res.status(404).json({ message: 'User complaint relation not found' });
+      return res.status(404).json({ message: 'Звязок зі скаргою користувача не знайдено' });
     }
     await userComplain.destroy();
     res.status(204).send();
