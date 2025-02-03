@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const { models } = require("../models");
+const { generateToken } = require("../utils/tokenUtils");
 
 const router = express.Router();
 
@@ -95,11 +96,7 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ message: 'Пошта або пароль вказано невірно' });
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    const token = generateToken(user);
 
     res.status(200).json({ message: 'Вхід успішний',token:token });
   } catch (error) {

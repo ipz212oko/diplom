@@ -1,6 +1,8 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const FileService = require('../services/FileService');
+const upload = require('../middlewares/uploadMiddleware');
 const { models } = require("../models");
 
 const router = express.Router();
@@ -170,5 +172,60 @@ router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+/**
+ * @swagger
+ * /api/skills/{id}/image:
+ *   post:
+ *     summary: Upload skill image
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the skill
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Image uploaded successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Навичку не знайдено
+ */
+router.post('/:id/image',
+  authMiddleware,
+  roleMiddleware,
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          message: 'Будь ласка, завантажте зображення'
+        });
+      }
+
+      const skillId = req.params.id;
+      const fileName = await FileService.uploadSkillImage(skillId, req.file);
+
+      res.status(200).json({
+        success: true,
+        fileName
+      });
+    } catch (error) {
+      res.status(error.message === 'Навичку не знайдено' ? 404 : 400)
+      .json({ error: error.message });
+    }
+  });
 
 module.exports = router;

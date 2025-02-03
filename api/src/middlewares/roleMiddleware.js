@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { getTokenFromHeader } = require('../utils/tokenUtils');
 
 const roleMiddleware = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const  token = getTokenFromHeader(req);
 
   if (!token) {
     return res.status(401).json({ message: 'Жетон не надано' });
