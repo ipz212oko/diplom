@@ -77,13 +77,10 @@ const User = sequelize.define('User', {
     allowNull: true,
   },
   rating: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     allowNull: true,
     defaultValue: 0,
     validate: {
-      isInt: {
-        msg: 'Рейтинг має бути цілим числом',
-      },
       min: {
         args: [0],
         msg: 'Рейтинг не може бути меншим за 0',

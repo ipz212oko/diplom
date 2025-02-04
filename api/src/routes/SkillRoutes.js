@@ -25,8 +25,6 @@ const router = express.Router();
  *                 type: string
  *               description:
  *                 type: string
- *               rating:
- *                 type: integer
  *     responses:
  *       201:
  *         description: Skill created successfully
@@ -113,8 +111,6 @@ router.get('/:id', async (req, res) => {
  *                 type: string
  *               description:
  *                 type: string
- *               rating:
- *                 type: integer
  *     responses:
  *       200:
  *         description: Skill updated successfully
@@ -133,7 +129,6 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     const updatedFields = {};
     if (req.body.title) updatedFields.title = req.body.title;
     if (req.body.description) updatedFields.description = req.body.description;
-    if (req.body.rating) updatedFields.rating = req.body.rating;
 
     await skill.update(updatedFields);
     res.status(200).json(skill);

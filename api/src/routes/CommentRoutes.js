@@ -26,8 +26,6 @@ const router = express.Router();
  *               sendtime:
  *                 type: string
  *                 format: date
- *               rating:
- *                 type: integer
  *     responses:
  *       201:
  *         description: Comment created successfully
@@ -112,8 +110,6 @@ router.get('/:id', async (req, res) => {
  *             properties:
  *               text:
  *                 type: string
- *               rating:
- *                 type: integer
  *     responses:
  *       200:
  *         description: Comment updated successfully
@@ -130,7 +126,6 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     }
     const updatedFields = {};
     if (req.body.text) updatedFields.text = req.body.text;
-    if (req.body.rating) updatedFields.description = req.body.rating;
     await comment.update(updatedFields);
     res.status(200).json(comment);
   } catch (error) {

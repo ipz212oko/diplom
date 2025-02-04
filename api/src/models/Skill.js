@@ -28,24 +28,6 @@ const Skill = sequelize.define('Skill', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  rating: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
-    validate: {
-      isInt: {
-        msg: 'Рейтинг має бути цілим числом',
-      },
-      min: {
-        args: [0],
-        msg: 'Рейтинг не може бути меншим за 0',
-      },
-      max: {
-        args: [5],
-        msg: 'Рейтинг не може бути більшим за 5',
-      },
-    },
-  },
 }, {
   tableName: 'skill',
   timestamps: false,

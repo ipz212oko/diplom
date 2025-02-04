@@ -26,8 +26,6 @@ const router = express.Router();
  *                 type: string
  *               worktime:
  *                 type: string
- *               rating:
- *                 type: integer
  *               description:
  *                 type: string
  *     responses:
@@ -122,8 +120,6 @@ router.get('/:id', async (req, res) => {
  *                 type: string
  *               worktime:
  *                 type: string
- *               rating:
- *                 type: integer
  *               description:
  *                 type: string
  *     responses:
@@ -147,7 +143,6 @@ router.patch('/:id', authMiddleware, async (req, res) => {
     if (req.body.price) updatedFields.price = req.body.price;
     if (req.body.region) updatedFields.region = req.body.region;
     if (req.body.worktime) updatedFields.worktime = req.body.worktime;
-    if (req.body.rating) updatedFields.rating = req.body.rating;
     if (req.body.description) updatedFields.description = req.body.description;
 
     await order.update(updatedFields);
