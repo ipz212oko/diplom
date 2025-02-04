@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
     const usersSkills = await models.UsersSkill.findAll();
     res.status(200).json(usersSkills);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -89,7 +89,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(usersSkill);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -169,7 +169,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await usersSkill.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

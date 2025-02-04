@@ -33,15 +33,6 @@ const Comment = sequelize.define('Comment', {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  rating: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
-    validate: {
-      min: 0,
-      max: 5,
-    },
-  },
 }, {
   tableName: 'comment',
   timestamps: false,

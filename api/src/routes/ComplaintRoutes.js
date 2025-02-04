@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
     const complaints = await models.Complaint.findAll();
     res.status(200).json(complaints);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -80,7 +80,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(complaint);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -160,7 +160,7 @@ router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     await complaint.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

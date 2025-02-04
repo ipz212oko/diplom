@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
     const messages = await models.Message.findAll();
     res.status(200).json(messages);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -84,7 +84,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(message);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -158,7 +158,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await message.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

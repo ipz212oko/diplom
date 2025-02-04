@@ -5,6 +5,8 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const checkUserIdMiddleware = require("../middlewares/checkUserIdMiddleware");
 const uploadPDF = require('../middlewares/uploadPDFMiddleware');
 const upload = require('../middlewares/uploadMiddleware');
+const isOwnerMiddleware = require('../middlewares/isOwnerMiddleware');
+const calculateAverageRating = require('../utils/calculateAverageRating');
 const FileService = require('../services/FileService');
 const { models } = require("../models");
 const { getTokenFromHeader,generateToken } = require("../utils/tokenUtils");
@@ -73,7 +75,7 @@ router.get('/',authMiddleware, async (req, res) => {
         });
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -108,7 +110,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 
         res.status(200).json(userInfo);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -140,7 +142,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
         }
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -173,9 +175,6 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *                 type: string
  *               description:
  *                 type: string
- *               rating:
- *                 type: number
- *                 format: float
  *     responses:
  *       200:
  *         description: User updated successfully
@@ -191,15 +190,13 @@ router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
-
-
         const updatedFields = {};
+
         if (req.body.name) updatedFields.name = req.body.name;
         if (req.body.surname) updatedFields.surname = req.body.surname;
         if (req.body.email) updatedFields.email = req.body.email;
         if (req.body.password) updatedFields.password = req.body.password;
         if (req.body.description) updatedFields.description = req.body.description;
-        if (req.body.rating) updatedFields.rating = req.body.rating;
 
         await user.update(updatedFields);
         res.status(200).json(user);
@@ -235,7 +232,7 @@ router.delete('/:id', authMiddleware,checkUserIdMiddleware, async (req, res) => 
         await user.destroy();
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -387,7 +384,7 @@ router.post('/:id/pdf',
  *         description: Invalid password format or passwords don't match
  *       401:
  *         description: Current password is incorrect
- *       500:
+ *       400:
  *         description: Server error
  */
 router.post('/change-password', authMiddleware, async (req, res) => {
@@ -430,8 +427,62 @@ router.post('/change-password', authMiddleware, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
+/**
+ * @swagger
+ * /api/users/{id}/rating:
+ *   patch:
+ *     summary: Update user rating
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user to update
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newRating:
+ *                 type: number
+ *                 format: float
+ *                 description: New rating to update
+ *     responses:
+ *       200:
+ *         description: Rating updated successfully
+ *       400:
+ *         description: Invalid data
+ *       404:
+ *         description: User not found
+ */
+router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) => {
+    try {
+        const { newRating } = req.body;
+        const rating = Number(newRating);
+
+        if (isNaN(rating) || rating < 0 || rating > 5) {
+            return res.status(400).json({ error: 'Рейтинг має бути числом між 0 та 5' });
+        }
+
+        const user = await models.User.findByPk(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'Користувача не знайдено' });
+        }
+
+        const averageRating = await calculateAverageRating(rating, user.rating);
+        const roundedAverageRating = Math.round(averageRating);
+
+        await user.update({ rating: roundedAverageRating });
+        res.status(200).json({ success: true, rating: roundedAverageRating });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 module.exports = router;

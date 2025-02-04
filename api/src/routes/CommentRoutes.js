@@ -26,8 +26,6 @@ const router = express.Router();
  *               sendtime:
  *                 type: string
  *                 format: date
- *               rating:
- *                 type: integer
  *     responses:
  *       201:
  *         description: Comment created successfully
@@ -57,7 +55,7 @@ router.get('/', async (req, res) => {
     const comments = await models.Comment.findAll();
     res.status(200).json(comments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -87,7 +85,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(comment);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -112,8 +110,6 @@ router.get('/:id', async (req, res) => {
  *             properties:
  *               text:
  *                 type: string
- *               rating:
- *                 type: integer
  *     responses:
  *       200:
  *         description: Comment updated successfully
@@ -130,7 +126,6 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     }
     const updatedFields = {};
     if (req.body.text) updatedFields.text = req.body.text;
-    if (req.body.rating) updatedFields.description = req.body.rating;
     await comment.update(updatedFields);
     res.status(200).json(comment);
   } catch (error) {
@@ -165,7 +160,7 @@ router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     await comment.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
