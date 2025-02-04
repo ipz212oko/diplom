@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
     const orders = await models.Order.findAll();
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(order);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -179,7 +179,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await order.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

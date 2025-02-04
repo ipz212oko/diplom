@@ -50,7 +50,7 @@ router.get('/',authMiddleware, async (req, res) => {
     const orderSkills = await models.OrdersSkill.findAll();
     res.status(200).json(orderSkills);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -80,7 +80,7 @@ router.get('/:id', authMiddleware,async (req, res) => {
     }
     res.status(200).json(orderSkill);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -160,7 +160,7 @@ router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
     await orderSkill.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

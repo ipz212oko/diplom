@@ -68,7 +68,7 @@ const router = express.Router();
  *                 message:
  *                   type: string
  *                   example: "User not found"
- *       500:
+ *       400:
  *         description: Internal server error
  *         content:
  *           application/json:
@@ -100,7 +100,7 @@ router.post('/', async (req, res) => {
 
     res.status(200).json({ message: 'Вхід успішний',token:token });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(400).json({ message:error });
   }
 });
 

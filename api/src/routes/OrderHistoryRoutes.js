@@ -52,7 +52,7 @@ router.get('/', authMiddleware, async (req, res) => {
     const orderHistories = await models.OrderHistory.findAll();
     res.status(200).json(orderHistories);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -82,7 +82,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
     }
     res.status(200).json(orderHistory);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -162,7 +162,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await orderHistory.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

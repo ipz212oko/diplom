@@ -75,7 +75,7 @@ router.get('/',authMiddleware, async (req, res) => {
         });
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -110,7 +110,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 
         res.status(200).json(userInfo);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -142,7 +142,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
         }
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -232,7 +232,7 @@ router.delete('/:id', authMiddleware,checkUserIdMiddleware, async (req, res) => 
         await user.destroy();
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -384,7 +384,7 @@ router.post('/:id/pdf',
  *         description: Invalid password format or passwords don't match
  *       401:
  *         description: Current password is incorrect
- *       500:
+ *       400:
  *         description: Server error
  */
 router.post('/change-password', authMiddleware, async (req, res) => {
@@ -427,7 +427,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 
@@ -482,7 +482,7 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
         await user.update({ rating: roundedAverageRating });
         res.status(200).json({ success: true, rating: roundedAverageRating });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 module.exports = router;
