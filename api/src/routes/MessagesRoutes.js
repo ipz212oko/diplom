@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -44,19 +45,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/messages:
  *   get:
- *     summary: Get all messages
+ *     summary: Get all messages with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of messages per page (default is 10)
  *     responses:
  *       200:
- *         description: List of messages
+ *         description: List of messages with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
-    const messages = await models.Message.findAll();
-    res.status(200).json(messages);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: messages } = await models.Message.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      messages
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

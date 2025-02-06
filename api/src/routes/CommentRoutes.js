@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -45,19 +46,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/comments:
  *   get:
- *     summary: Get all comments
+ *     summary: Get all comments with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of comments per page (default is 10)
  *     responses:
  *       200:
- *         description: List of comments
+ *         description: List of comments with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
-    const comments = await models.Comment.findAll();
-    res.status(200).json(comments);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: comments } = await models.Comment.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      comments
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

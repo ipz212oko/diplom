@@ -4,41 +4,53 @@ const roleMiddleware = require("../middlewares/roleMiddleware");
 const FileService = require('../services/FileService');
 const upload = require('../middlewares/uploadMiddleware');
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
 /**
  * @swagger
  * /api/skills:
- *   post:
- *     summary: Create a new skill
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               image:
- *                 type: string
- *               description:
- *                 type: string
+ *   get:
+ *     summary: Get all skills with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of skills per page (default is 10)
  *     responses:
- *       201:
- *         description: Skill created successfully
- *       400:
- *         description: Bad Request
+ *       200:
+ *         description: List of skills with pagination metadata
  */
-router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const skill = await models.Skill.create(req.body);
-    res.status(201).json({success:true});
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: skills } = await models.Skill.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      skills
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

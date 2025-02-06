@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const getPaginationParams = require("../utils/pagination");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -40,19 +41,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/complaints:
  *   get:
- *     summary: Get all complaints
+ *     summary: Get all complaints with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of complaints per page (default is 10)
  *     responses:
  *       200:
- *         description: List of complaints
+ *         description: List of complaints with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
-    const complaints = await models.Complaint.findAll();
-    res.status(200).json(complaints);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: complaints } = await models.Complaint.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      complaints
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger
