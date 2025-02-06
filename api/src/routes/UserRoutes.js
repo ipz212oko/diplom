@@ -47,6 +47,14 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
+        const existingUser = await models.User.findOne({
+            where: { email: req.body.email }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'Користувач з таким email вже існує' });
+        }
+
         const user = await models.User.create(req.body);
         const token = generateToken(user);
 

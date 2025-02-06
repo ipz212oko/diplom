@@ -16,17 +16,27 @@ const Skill = sequelize.define('Skill', {
         msg: 'Назва не може бути порожньою',
       },
       notNull: {
-        msg: 'Назва не може бути порожньою',
+        msg: 'Назва обовʼязкова',
       },
     },
   },
   image: {
     type: DataTypes.TEXT,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'image обовʼязкове',
+      },
+    },
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'description обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'skill',

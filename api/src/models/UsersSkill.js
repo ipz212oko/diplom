@@ -13,10 +13,40 @@ const UsersSkill = sequelize.define('UsersSkill', {
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'user_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'user_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'user_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'user_id обовʼязкове',
+      },
+    },
   },
   skill_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'skill_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'skill_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'skill_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'skill_id обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'users_skill',

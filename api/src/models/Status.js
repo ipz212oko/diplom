@@ -16,13 +16,18 @@ const Status = sequelize.define('Status', {
         msg: 'Назва не може бути порожньою',
       },
       notNull: {
-        msg: 'Назва не може бути порожньою',
+        msg: 'Назва обовʼязкова',
       },
     },
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'description не може бути порожнім',
+      },
+    },
   },
 }, {
   tableName: 'status',

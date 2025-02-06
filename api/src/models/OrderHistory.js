@@ -13,14 +13,47 @@ const OrderHistory = sequelize.define('OrderHistory', {
   order_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'order_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'order_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'order_id обовʼязкове',
+      },
+    },
   },
   status_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'status_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'status_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'status_id обовʼязкове',
+      },
+    },
   },
   time: {
     type: DataTypes.DATEONLY,
     allowNull: false,
+    validate: {
+      isDate: {
+        msg: 'time має бути дійсною датою',
+      },
+      notNull: {
+        msg: 'time обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'time обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'order_history',

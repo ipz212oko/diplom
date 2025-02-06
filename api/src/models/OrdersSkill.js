@@ -13,10 +13,40 @@ const OrdersSkill = sequelize.define('OrderSkill', {
   order_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'order_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'order_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'order_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'order_id обовʼязкове',
+      },
+    },
   },
   skill_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'skill_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'skill_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'skill_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'skill_id обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'order_skill',
