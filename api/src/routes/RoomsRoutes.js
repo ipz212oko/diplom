@@ -48,7 +48,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of rooms
  */
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const rooms = await models.Room.findAll();
     res.status(200).json(rooms);
@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
  *       404:
  *         description: Кімната не знайдена
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id',authMiddleware, async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {

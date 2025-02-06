@@ -1,6 +1,5 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
-const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
 
 const router = express.Router();
@@ -115,7 +114,7 @@ router.get('/:id', authMiddleware,async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware, async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
@@ -151,7 +150,7 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {

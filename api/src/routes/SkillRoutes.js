@@ -31,7 +31,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware,roleMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const skill = await models.Skill.create(req.body);
     res.status(201).json({success:true});
@@ -119,7 +119,7 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: Навички не знайдено
  */
-router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const skill = await models.Skill.findByPk(req.params.id);
     if (!skill) {
@@ -155,7 +155,7 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  *       404:
  *         description: Навички не знайдено
  */
-router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const skill = await models.Skill.findByPk(req.params.id);
     if (!skill) {
@@ -200,7 +200,7 @@ router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  */
 router.post('/:id/image',
   authMiddleware,
-  roleMiddleware,
+  roleMiddleware('admin'),
   upload.single('image'),
   async (req, res) => {
     try {
