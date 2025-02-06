@@ -13,14 +13,44 @@ const Message = sequelize.define('Message', {
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'user_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'user_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'user_id не може бути пустим',
+      },
+    },
   },
   room_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'room_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'room_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'room_id не може бути пустим',
+      },
+    },
   },
   date: {
     type: DataTypes.DATE,
     allowNull: false,
+    validate: {
+      isDate: {
+        msg: 'date має бути дійсною датою',
+      },
+      notNull: {
+        msg: 'date обовʼязкове',
+      },
+    },
   },
   text: {
     type: DataTypes.TEXT,

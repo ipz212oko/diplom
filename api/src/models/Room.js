@@ -3,7 +3,6 @@ const { sequelize } = require('../config/database');
 const User = require('./User');
 const Order = require('./Order');
 
-
 const Room = sequelize.define('Room', {
   id: {
     type: DataTypes.INTEGER,
@@ -14,18 +13,75 @@ const Room = sequelize.define('Room', {
   user_first_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'user_first_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'user_first_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'user_first_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'user_first_id обовʼязкове',
+      },
+    },
   },
   user_second_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    validate: {
+      isInt: {
+        msg: 'user_second_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'user_second_id не може бути відʼємним',
+      },
+      notEmpty: {
+        msg: 'user_second_id обовʼязкове',
+      },
+    },
   },
   order_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'order_id має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'order_id не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'order_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'order_id обовʼязкове',
+      },
+    },
   },
   number: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    validate: {
+      isInt: {
+        msg: 'number має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'number не може бути відʼємним',
+      },
+      notNull: {
+        msg: 'number обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'number обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'room',

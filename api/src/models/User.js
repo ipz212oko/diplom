@@ -37,7 +37,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     unique: {
-      msg: 'Email має бути унікальним'
+      msg: 'Користувач з такою поштою вже існує'
     },
     validate: {
       notEmpty: {
@@ -100,7 +100,7 @@ const User = sequelize.define('User', {
       },
       len: {
         args: [4, 100],
-        msg: 'Пароль має містити щонайменше 4 символів',
+        msg: 'Пароль має містити щонайменше 4 символа',
       },
     },
   },

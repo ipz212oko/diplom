@@ -11,10 +11,23 @@ const Complaint = sequelize.define('Complaint', {
   time: {
     type: DataTypes.DATEONLY,
     allowNull: false,
+    validate: {
+      isDate: {
+        msg: 'time має бути дійсною датою',
+      },
+      notNull: {
+        msg: 'time обовʼязкове',
+      },
+    },
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'текст не може бути порожнім',
+      },
+    },
   },
 }, {
   tableName: 'complaint',

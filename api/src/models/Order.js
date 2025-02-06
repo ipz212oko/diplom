@@ -12,6 +12,17 @@ const Order = sequelize.define('Order', {
   status_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'status_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'status_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'status_id обовʼязкове',
+      },
+    },
   },
   title: {
     type: DataTypes.STRING,
@@ -44,14 +55,29 @@ const Order = sequelize.define('Order', {
   region: {
     type: DataTypes.STRING,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'region не може бути пустим',
+      },
+    },
   },
   worktime: {
     type: DataTypes.DATEONLY,
     allowNull: true,
+    validate: {
+      isDate: {
+        msg: 'worktime має бути дійсною датою',
+      },
+    },
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'description не може бути пустим',
+      },
+    },
   },
 }, {
   tableName: 'order',

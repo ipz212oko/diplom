@@ -12,6 +12,14 @@ const Comment = sequelize.define('Comment', {
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'user_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'user_id обовʼязкове',
+      },
+    },
   },
   parent_id: {
     type: DataTypes.INTEGER,
@@ -32,6 +40,14 @@ const Comment = sequelize.define('Comment', {
   sendtime: {
     type: DataTypes.DATEONLY,
     allowNull: false,
+    validate: {
+      isDate: {
+        msg: 'дата має бути дійсною датою',
+      },
+      notNull: {
+        msg: 'дата обовʼязкове',
+      },
+    },
   },
 }, {
   tableName: 'comment',
