@@ -115,7 +115,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *       404:
  *         description: Звязок зі скаргою користувача не знайдено
  */
-router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {
@@ -151,7 +151,7 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  *       404:
  *         description: Звязок зі скаргою користувача не знайдено
  */
-router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {

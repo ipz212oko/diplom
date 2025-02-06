@@ -27,7 +27,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware,roleMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const status = await models.Status.create(req.body);
     res.status(201).json({ success: true });
@@ -115,7 +115,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *       404:
  *         description: Статус не знайдено
  */
-router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const status = await models.Status.findByPk(req.params.id);
     if (!status) {
@@ -151,7 +151,7 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  *       404:
  *         description: Статус не знайдено
  */
-router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const status = await models.Status.findByPk(req.params.id);
     if (!status) {

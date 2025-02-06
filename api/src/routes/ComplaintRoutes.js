@@ -115,7 +115,7 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: Скарги не знайдено
  */
-router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const complaint = await models.Complaint.findByPk(req.params.id);
     if (!complaint) {
@@ -151,7 +151,7 @@ router.patch('/:id', authMiddleware,roleMiddleware, async (req, res) => {
  *       404:
  *         description: Скарги не знайдено
  */
-router.delete('/:id', authMiddleware,roleMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const complaint = await models.Complaint.findByPk(req.params.id);
     if (!complaint) {
