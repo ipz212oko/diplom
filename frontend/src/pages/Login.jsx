@@ -1,10 +1,11 @@
 import * as yup from "yup"
-import { Center, Card, Heading, Stack } from "@chakra-ui/react";
+import { Center, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import { InputField, PasswordField } from "@/components/ui/field.jsx";
 import { Form, Submit } from "@/components/ui/form.jsx";
 import { validationMessage } from "@/config/validationMessage.js";
 import { useAuth } from "@/providers/AuthProvider.jsx";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const { REQUIRED, INVALID_EMAIL } = validationMessage;
 
@@ -16,15 +17,18 @@ const validationSchema = yup
   .required()
 
 export function Login() {
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const onSubmit = async (userData) => {
+    setError(null);
+
     try {
       await login(userData);
-      navigate("/");
+      navigate("/account");
     } catch(error) {
-      console.error("Login failed", error);
+      setError(error.message);
     }
   };
 
@@ -38,6 +42,7 @@ export function Login() {
               <InputField label="Пошта" name="email" />
               <PasswordField label="Пароль" name="password" />
             </Stack>
+            {error && <Text mt={2} color="red" fontSize="sm">{error}</Text>}
           </Card.Body>
           <Card.Footer justifyContent="center">
             <Submit colorPalette="blue">Увійти</Submit>

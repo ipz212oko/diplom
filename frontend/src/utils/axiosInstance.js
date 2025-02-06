@@ -7,11 +7,16 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401) {
+    const errorStatus = error.response.status;
+    const errorMessage = error.response?.data?.message || error.response?.data?.details?.[0];
+
+    if (errorStatus === 401) {
       localStorage.removeItem('token');
       window.location.reload();
     }
 
-    return Promise.reject(error);
+    return Promise.reject({
+      message: errorMessage || "Упс, щось пішло не так",
+    });
   }
 );
