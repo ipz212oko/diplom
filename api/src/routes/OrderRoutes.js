@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -47,19 +48,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/orders:
  *   get:
- *     summary: Get all orders
+ *     summary: Get all orders with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of orders per page (default is 10)
  *     responses:
  *       200:
- *         description: List of orders
+ *         description: List of orders with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
-    const orders = await models.Order.findAll();
-    res.status(200).json(orders);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: orders } = await models.Order.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      orders
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

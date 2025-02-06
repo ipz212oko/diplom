@@ -10,6 +10,8 @@ const calculateAverageRating = require('../utils/calculateAverageRating');
 const FileService = require('../services/FileService');
 const { models } = require("../models");
 const { getTokenFromHeader,generateToken } = require("../utils/tokenUtils");
+const roleMiddleware = require("../middlewares/roleMiddleware");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -63,21 +65,45 @@ router.post('/', async (req, res) => {
  * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
+ *     summary: Get all users with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of users per page (default is 10)
  *     responses:
  *       200:
- *         description: List of users
+ *         description: List of users with pagination metadata
  */
-router.get('/',authMiddleware, async (req, res) => {
+router.get('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
     try {
-        const users = await models.User.findAll({
-            attributes: { exclude: ['password','role'] }
+        const { page, limit, offset } = getPaginationParams(req.query);
+
+        const { count, rows: users } = await models.User.findAndCountAll({
+            limit,
+            offset
         });
-        res.status(200).json(users);
+
+        res.status(200).json({
+            total: count,
+            page,
+            limit,
+            totalPages: Math.ceil(count / limit),
+            users
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
+
 
 /**
  * @swagger

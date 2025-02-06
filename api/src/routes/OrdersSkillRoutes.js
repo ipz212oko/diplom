@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -39,19 +40,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/orders-skills:
  *   get:
- *     summary: Get all order-skill relations
+ *     summary: Get all order-skill relations with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of order-skill relations per page (default is 10)
  *     responses:
  *       200:
- *         description: List of order-skill relations
+ *         description: List of order-skill relations with pagination metadata
  */
-router.get('/',authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
-    const orderSkills = await models.OrdersSkill.findAll();
-    res.status(200).json(orderSkills);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: orderSkills } = await models.OrdersSkill.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      orderSkills
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

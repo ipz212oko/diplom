@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -42,19 +43,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/order-history:
  *   get:
- *     summary: Get all order history entries
+ *     summary: Get all order history entries with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of order history entries per page (default is 10)
  *     responses:
  *       200:
- *         description: List of order history entries
+ *         description: List of order history entries with pagination metadata
  */
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const orderHistories = await models.OrderHistory.findAll();
-    res.status(200).json(orderHistories);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: orderHistories } = await models.OrderHistory.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      orderHistories
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger

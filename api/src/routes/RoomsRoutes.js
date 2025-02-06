@@ -1,6 +1,8 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
+const roleMiddleware = require("../middlewares/roleMiddleware");
+const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -43,19 +45,45 @@ router.post('/', authMiddleware, async (req, res) => {
  * @swagger
  * /api/rooms:
  *   get:
- *     summary: Get all rooms
+ *     summary: Get all rooms with pagination
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (default is 1)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of rooms per page (default is 10)
  *     responses:
  *       200:
- *         description: List of rooms
+ *         description: List of rooms with pagination metadata
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, roleMiddleware('admin'), async (req, res) => {
   try {
-    const rooms = await models.Room.findAll();
-    res.status(200).json(rooms);
+    const { page, limit, offset } = getPaginationParams(req.query);
+
+    const { count, rows: rooms } = await models.Room.findAndCountAll({
+      limit,
+      offset
+    });
+
+    res.status(200).json({
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+      rooms
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 /**
  * @swagger
