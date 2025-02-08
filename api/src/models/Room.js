@@ -75,9 +75,6 @@ const Room = sequelize.define('Room', {
         args: [0],
         msg: 'number не може бути відʼємним',
       },
-      notNull: {
-        msg: 'number обовʼязкове',
-      },
       notEmpty: {
         msg: 'number обовʼязкове',
       },

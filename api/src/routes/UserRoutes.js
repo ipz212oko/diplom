@@ -139,7 +139,8 @@ router.get('/me', authMiddleware, async (req, res) => {
             name: user.name,
             surname: user.surname,
             role: user.role,
-            email: user.email
+            email: user.email,
+            image: user.image,
         };
 
         res.status(200).json(userInfo);
