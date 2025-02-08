@@ -53,6 +53,16 @@ const UsersSkill = sequelize.define('UsersSkill', {
   timestamps: false,
   charset: 'utf8mb4',
   collate: 'utf8mb4_unicode_ci',
+  indexes: [
+    {
+      unique: true,
+      fields: ['user_id', 'skill_id'],
+      name: 'user_skill_unique',
+      error_messages: {
+        unique: 'Ця навичка вже додана для даного користувача'
+      }
+    }
+  ]
 });
 
 UsersSkill.belongsTo(User, {
