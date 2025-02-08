@@ -44,7 +44,6 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-
 router.post('/', async (req, res) => {
     try {
         const existingUser = await models.User.findOne({
@@ -96,6 +95,15 @@ router.get('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
         const { page, limit, offset } = getPaginationParams(req.query);
 
         const { count, rows: users } = await models.User.findAndCountAll({
+            attributes: { exclude: ['password'] },
+            include: [{
+                model: models.UsersSkill,
+                as: 'userSkills',
+                include: [{
+                    model: models.Skill,
+                    as: 'skill'
+                }]
+            }],
             limit,
             offset
         });
@@ -129,7 +137,19 @@ router.get('/me', authMiddleware, async (req, res) => {
         const  token = getTokenFromHeader(req);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await models.User.findOne({ where: { email: decoded.email } });
+        const user = await models.User.findOne({
+            attributes: { exclude: ['password'] },
+            where: { email: decoded.email },
+            include: [{
+                model: models.UsersSkill,
+                as: 'userSkills',
+                include: [{
+                    model: models.Skill,
+                    as: 'skill'
+                }]
+            }]
+        });
+
         if (!user) {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
@@ -141,6 +161,7 @@ router.get('/me', authMiddleware, async (req, res) => {
             role: user.role,
             email: user.email,
             image: user.image,
+            skills: user.userSkills.map(userSkill => userSkill.skill)
         };
 
         res.status(200).json(userInfo);
@@ -169,13 +190,45 @@ router.get('/me', authMiddleware, async (req, res) => {
  */
 router.get('/:id',authMiddleware, async (req, res) => {
     try {
+        const  token = getTokenFromHeader(req);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
         const user = await models.User.findByPk(req.params.id, {
-            attributes: { exclude: ['password','role'] }
+            attributes: { exclude: ['password'] },
+            include: [{
+                model: models.UsersSkill,
+                as: 'userSkills',
+                include: [{
+                    model: models.Skill,
+                    as: 'skill'
+                }]
+            }]
         });
         if (!user) {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
-        res.status(200).json(user);
+        if (decoded.role !=='admin' &&user.role === 'admin') {
+            return res.status(404).json({ message: 'Користувача не знайдено' });
+        }
+
+        const transformedUser = {
+            id: user.id,
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            role: user.role,
+            file: user.file,
+            image: user.image,
+            description: user.description,
+            rating: user.rating,
+            skills: user.userSkills.map(userSkill => ({
+                id: userSkill.skill.id,
+                title: userSkill.skill.title,
+                image: userSkill.skill.image,
+                description: userSkill.skill.description
+            }))
+        };
+        res.status(200).json(transformedUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -218,7 +271,6 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *       404:
  *         description: Користувача не знайдено
  */
-
 router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
     try {
         const user = await models.User.findByPk(req.params.id);
