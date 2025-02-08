@@ -12,6 +12,7 @@ const OrderHistoryRoutes = require('./OrderHistoryRoutes');
 const RoomsRoutes = require('./RoomsRoutes');
 const CommentRoutes = require('./CommentRoutes');
 const MessagesRoutes = require('./MessagesRoutes');
+const SearchRoutes = require('./SearchRoutes');
 
 
 module.exports = {
@@ -27,5 +28,6 @@ module.exports = {
   OrderHistoryRoutes,
   RoomsRoutes,
   CommentRoutes,
-  MessagesRoutes
+  MessagesRoutes,
+  SearchRoutes,
 };
