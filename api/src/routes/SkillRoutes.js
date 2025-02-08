@@ -51,20 +51,34 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 /**
  * @swagger
  * /api/skills:
- *   get:
- *     summary: Get all skills
+ *   post:
+ *     summary: Create a new skill
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               description:
+ *                 type: string
  *     responses:
- *       200:
- *         description: List of skills
+ *       201:
+ *         description: Skill created successfully
+ *       400:
+ *         description: Bad Request
  */
-router.get('/',  async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
-    const skills = await models.Skill.findAll();
-    res.status(200).json(skills);
+    const skill = await models.Skill.create(req.body);
+    res.status(201).json({success:true});
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

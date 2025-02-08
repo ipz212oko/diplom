@@ -53,6 +53,16 @@ const OrdersSkill = sequelize.define('OrderSkill', {
   timestamps: false,
   charset: 'utf8mb4',
   collate: 'utf8mb4_unicode_ci',
+  indexes: [
+    {
+      unique: true,
+      fields: ['order_id', 'skill_id'],
+      name: 'order_skill_unique',
+      error_messages: {
+        unique: 'Ця навичка вже додана для даного замовлення'
+      }
+    }
+  ]
 });
 
 Order.hasMany(OrdersSkill, {

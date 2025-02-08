@@ -53,6 +53,16 @@ const UserComplain = sequelize.define('UserComplain', {
   timestamps: false,
   charset: 'utf8mb4',
   collate: 'utf8mb4_unicode_ci',
+  indexes: [
+    {
+      unique: true,
+      fields: ['user_id', 'complaint_id'],
+      name: 'user_complaint_unique',
+      error_messages: {
+        unique: 'Ця скарга вже подана даним користувачем'
+      }
+    }
+  ]
 });
 
 User.hasMany(UserComplain, {
