@@ -12,7 +12,7 @@ const roleMiddleware = (requiredRole = 'admin') => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (decoded.role !== requiredRole) {
+      if (decoded.role!=='admin'&&decoded.role !== requiredRole) {
         return res.status(403).json({ message: 'Доступ заборонено' });
       }
 

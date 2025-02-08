@@ -2,6 +2,8 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
+const roleMiddleware = require("../middlewares/roleMiddleware");
+const ownerOrderMiddleware = require("../middlewares/ownerOrderMiddleware");
 
 const router = express.Router();
 
@@ -27,7 +29,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('customer'),ownerOrderMiddleware('order'), async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.create(req.body);
     res.status(201).json({ success: true });
@@ -58,7 +60,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of order-skill relations with pagination metadata
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { page, limit, offset } = getPaginationParams(req.query);
 
@@ -98,7 +100,7 @@ router.get('/', authMiddleware, async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.get('/:id', authMiddleware,async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
@@ -141,7 +143,7 @@ router.get('/:id', authMiddleware,async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddleware('orderSkill'), async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {
@@ -177,7 +179,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Order-skill relation not found
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddleware('orderSkill'), async (req, res) => {
   try {
     const orderSkill = await models.OrdersSkill.findByPk(req.params.id);
     if (!orderSkill) {

@@ -3,6 +3,9 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const ownerOrderMiddleware = require("../middlewares/ownerOrderMiddleware");
+const { getTokenFromHeader } = require("../utils/tokenUtils");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -53,6 +56,13 @@ const router = express.Router();
  */
 router.post('/', authMiddleware,roleMiddleware('customer'),  async (req, res) => {
   try {
+    const  token = getTokenFromHeader(req);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if(decoded.id !==req.body.user_id){
+      return res.status(403).json({ message: 'У вас немає доступу до цього ресурсу' });
+    }
+
     const order = await models.Order.create(req.body);
     res.status(201).json({ success: true });
   } catch (error) {
@@ -173,7 +183,7 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: Замовлення не знайдено
  */
-router.patch('/:id', authMiddleware,roleMiddleware('customer'), async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddleware('order'), async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
@@ -213,7 +223,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('customer'), async (req, res)
  *       404:
  *         description: Замовлення не знайдено
  */
-router.delete('/:id', authMiddleware,roleMiddleware('customer'), async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddleware('order'), async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {

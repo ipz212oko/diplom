@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('customer'), async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.create(req.body);
     res.status(201).json({ success: true });
@@ -61,7 +62,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of order history entries with pagination metadata
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/',  async (req, res) => {
   try {
     const { page, limit, offset } = getPaginationParams(req.query);
 
@@ -101,7 +102,7 @@ router.get('/', authMiddleware, async (req, res) => {
  *       404:
  *         description: Запис в історії замовлень не знайдено
  */
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id',  async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {
@@ -144,7 +145,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Запис в історії замовлень не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {
@@ -180,7 +181,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Запис в історії замовлень не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
     const orderHistory = await models.OrderHistory.findByPk(req.params.id);
     if (!orderHistory) {

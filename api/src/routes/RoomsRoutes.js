@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const ownerRoomMiddleware = require("../middlewares/ownerRoomMiddleware");
 const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
@@ -32,7 +33,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,ownerRoomMiddleware('post'), async (req, res) => {
   try {
     const room = await models.Room.create(req.body);
     res.status(201).json({ success: true });
@@ -84,7 +85,6 @@ router.get('/', authMiddleware, roleMiddleware('admin'), async (req, res) => {
   }
 });
 
-
 /**
  * @swagger
  * /api/rooms/{id}:
@@ -103,7 +103,7 @@ router.get('/', authMiddleware, roleMiddleware('admin'), async (req, res) => {
  *       404:
  *         description: Кімната не знайдена
  */
-router.get('/:id',authMiddleware, async (req, res) => {
+router.get('/:id',authMiddleware,ownerRoomMiddleware('get'), async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
@@ -150,7 +150,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *       404:
  *         description: Кімната не знайдена
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('customer'),ownerRoomMiddleware('get'), async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
@@ -188,7 +188,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Кімната не знайдена
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerRoomMiddleware('get'), async (req, res) => {
   try {
     const room = await models.Room.findByPk(req.params.id);
     if (!room) {
