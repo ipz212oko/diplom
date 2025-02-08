@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Status = require('./Status');
+const User = require('./User');
 
 const Order = sequelize.define('Order', {
   id: {
@@ -8,6 +9,21 @@ const Order = sequelize.define('Order', {
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'user_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'user_id обовʼязкове',
+      },
+      notEmpty: {
+        msg: 'user_id обовʼязкове',
+      },
+    },
   },
   status_id: {
     type: DataTypes.INTEGER,
@@ -94,6 +110,18 @@ Status.hasMany(Order, {
 
 Order.belongsTo(Status, {
   foreignKey: 'status_id',
+  targetKey: 'id',
+});
+
+
+User.hasMany(Order, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+  as: 'user',
+});
+
+Order.belongsTo(User, {
+  foreignKey: 'user_id',
   targetKey: 'id',
 });
 
