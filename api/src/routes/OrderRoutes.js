@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 
@@ -16,26 +17,41 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - user_id
+ *               - status_id
+ *               - title
+ *               - price
  *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 description: ID користувача, який створює замовлення
  *               status_id:
  *                 type: integer
+ *                 description: ID статусу замовлення
  *               title:
  *                 type: string
+ *                 description: Назва замовлення
  *               price:
  *                 type: number
+ *                 description: Вартість замовлення
  *               region:
  *                 type: string
+ *                 description: Регіон виконання (необов'язково)
  *               worktime:
  *                 type: string
+ *                 format: date
+ *                 description: Дата виконання (необов'язково)
  *               description:
  *                 type: string
+ *                 description: Опис замовлення (необов'язково)
  *     responses:
  *       201:
  *         description: Order created successfully
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('customer'),  async (req, res) => {
   try {
     const order = await models.Order.create(req.body);
     res.status(201).json({ success: true });
@@ -157,7 +173,7 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: Замовлення не знайдено
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('customer'), async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
@@ -197,7 +213,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
  *       404:
  *         description: Замовлення не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('customer'), async (req, res) => {
   try {
     const order = await models.Order.findByPk(req.params.id);
     if (!order) {
