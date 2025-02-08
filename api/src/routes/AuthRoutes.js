@@ -36,18 +36,6 @@ const router = express.Router();
  *                 token:
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 1
- *                     email:
- *                       type: string
- *                       example: "user@example.com"
- *                     role:
- *                       type: string
- *                       example: "user"
  *       401:
  *         description: Invalid credentials
  *         content:

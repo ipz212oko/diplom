@@ -1,6 +1,7 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const ownerUserMiddleware = require("../middlewares/ownerUserMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
 
@@ -28,7 +29,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,ownerUserMiddleware('user'), async (req, res) => {
   try {
     const userComplain = await models.UserComplain.create(req.body);
     res.status(201).json({ success: true });
@@ -59,7 +60,7 @@ router.post('/', authMiddleware, async (req, res) => {
  *       200:
  *         description: List of user complaint relations with pagination metadata
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/',  async (req, res) => {
   try {
     const { page, limit, offset } = getPaginationParams(req.query);
 
@@ -99,7 +100,7 @@ router.get('/', authMiddleware, async (req, res) => {
  *       404:
  *         description: Звязок зі скаргою користувача не знайдено
  */
-router.get('/:id',authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const userComplain = await models.UserComplain.findByPk(req.params.id);
     if (!userComplain) {

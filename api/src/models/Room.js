@@ -85,6 +85,16 @@ const Room = sequelize.define('Room', {
   timestamps: false,
   charset: 'utf8mb4',
   collate: 'utf8mb4_unicode_ci',
+  indexes: [
+    {
+      unique: true,
+      fields: ['user_first_id', 'order_id'],
+      name: 'user_order_unique',
+      error_messages: {
+        unique: 'Виробник уже обрав дане замовлення'
+      }
+    }
+  ]
 });
 
 User.hasMany(Room, {

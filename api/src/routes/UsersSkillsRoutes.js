@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
+const ownerUserMiddleware = require("../middlewares/ownerUserMiddleware");
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,ownerUserMiddleware('user'), async (req, res) => {
   try {
 
     const skill = await models.Skill.findByPk(req.body.skill_id);
@@ -151,7 +152,7 @@ router.get('/:id', async (req, res) => {
  *       404:
  *         description: UsersSkill не знайдено
  */
-router.patch('/:id', authMiddleware,async (req, res) => {
+router.patch('/:id', authMiddleware,ownerUserMiddleware('userSkill'), async (req, res) => {
   try {
     const usersSkill = await models.UsersSkill.findByPk(req.params.id);
     if (!usersSkill) {
@@ -187,7 +188,7 @@ router.patch('/:id', authMiddleware,async (req, res) => {
  *       404:
  *         description: UsersSkill не знайдено
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,ownerUserMiddleware('userSkill'), async (req, res) => {
   try {
     const usersSkill = await models.UsersSkill.findByPk(req.params.id);
     if (!usersSkill) {
