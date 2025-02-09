@@ -12,6 +12,7 @@ const { models } = require("../models");
 const { getTokenFromHeader,generateToken } = require("../utils/tokenUtils");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const getPaginationParams = require("../utils/pagination");
+const { sendEmail } = require("../services/emailService");
 
 const router = express.Router();
 
@@ -654,4 +655,66 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
         res.status(400).json({ message: error.message });
     }
 });
+
+/**
+ * @swagger
+ * /api/users/send-email:
+ *   post:
+ *     summary: Send an email
+ *     description: Send an email to a specified address with a subject and text content
+ *     parameters:
+ *       - in: body
+ *         name: email
+ *         description: Email details
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             subject:
+ *               type: string
+ *               description: The subject of the email
+ *               example: "Test Email"
+ *             text:
+ *               type: string
+ *               description: The text body of the email
+ *               example: "This is a test email."
+ *     responses:
+ *       200:
+ *         description: Email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Email sent successfully!'
+ *                 response:
+ *                   type: string
+ *                   example: '250 2.0.0 OK ...'
+ *       500:
+ *         description: Error sending email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Error sending email'
+ *                 error:
+ *                   type: string
+ *                   example: 'Authentication failed'
+ */
+router.post('/send-email', async (req, res) => {
+    const { subject, text } = req.body;
+
+    try {
+        const response = await sendEmail('krosherobrine@gmail.com', subject, text);
+        res.status(200).json({ message: 'Email sent successfully!', response });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
 module.exports = router;
