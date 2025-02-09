@@ -386,6 +386,45 @@ router.post('/:id/image',
 
 /**
  * @swagger
+ * /api/users/{id}/image:
+ *   delete:
+ *     summary: Delete user profile image
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Image deleted successfully
+ *       404:
+ *         description: User not found
+ *       400:
+ *         description: Error during deletion
+ */
+router.delete('/:id/image',
+  authMiddleware,
+  checkUserIdMiddleware,
+  async (req, res) => {
+      try {
+          await FileService.deleteImage(req.params.id);
+          res.status(200).json({
+              success: true,
+              message: 'Зображення успішно видалено'
+          });
+      } catch (error) {
+          if (error.message === 'Користувача не знайдено') {
+              return res.status(404).json({ message: error.message });
+          }
+          res.status(400).json({ message: error.message });
+      }
+  }
+);
+
+/**
+ * @swagger
  * /api/users/{id}/pdf:
  *   post:
  *     summary: Upload user PDF file
@@ -430,8 +469,46 @@ router.post('/:id/pdf',
 
           res.status(200).json({
               success: true,
-              message: 'PDF успішно завантажено',
-              fileName: fileName
+              message: 'PDF успішно завантажено'
+          });
+      } catch (error) {
+          if (error.message === 'Користувача не знайдено') {
+              return res.status(404).json({ message: error.message });
+          }
+          res.status(400).json({ message: error.message });
+      }
+  }
+);
+
+/**
+ * @swagger
+ * /api/users/{id}/pdf:
+ *   delete:
+ *     summary: Delete user PDF file
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: PDF deleted successfully
+ *       404:
+ *         description: User not found
+ *       400:
+ *         description: Error during deletion
+ */
+router.delete('/:id/pdf',
+  authMiddleware,
+  checkUserIdMiddleware,
+  async (req, res) => {
+      try {
+          await FileService.deletePDF(req.params.id);
+          res.status(200).json({
+              success: true,
+              message: 'PDF успішно видалено'
           });
       } catch (error) {
           if (error.message === 'Користувача не знайдено') {
