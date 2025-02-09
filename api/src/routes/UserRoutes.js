@@ -33,6 +33,8 @@ const router = express.Router();
  *                 type: string
  *               email:
  *                 type: string
+ *               region:
+ *                 type: string
  *               password:
  *                 type: string
  *               role:
@@ -158,6 +160,7 @@ router.get('/me', authMiddleware, async (req, res) => {
             id: user.id,
             name: user.name,
             surname: user.surname,
+            region: user.region,
             role: user.role,
             email: user.email,
             image: user.image,
@@ -257,6 +260,8 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *                 type: string
  *               surname:
  *                 type: string
+ *               region:
+ *                 type: string
  *               email:
  *                 type: string
  *               password:
@@ -280,6 +285,7 @@ router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
         const updatedFields = {};
 
         if (req.body.name) updatedFields.name = req.body.name;
+        if (req.body.region) updatedFields.region = req.body.region;
         if (req.body.surname) updatedFields.surname = req.body.surname;
         if (req.body.email) updatedFields.email = req.body.email;
         if (req.body.password) updatedFields.password = req.body.password;

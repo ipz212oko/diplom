@@ -104,6 +104,15 @@ const User = sequelize.define('User', {
       },
     },
   },
+  region: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    validate: {
+      notEmpty: {
+        msg: 'Пароль не може бути порожнім',
+      },
+    },
+  },
 }, {
   tableName: 'user',
   timestamps: false,
