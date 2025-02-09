@@ -38,7 +38,7 @@ router.post('/', authMiddleware, async (req, res) => {
     const comment = await models.Comment.create(req.body);
     res.status(201).json(comment);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -81,7 +81,7 @@ router.get('/', async (req, res) => {
       comments
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -112,7 +112,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(comment);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -156,7 +156,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =>
     await comment.update(updatedFields);
     res.status(200).json(comment);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -187,7 +187,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =
     await comment.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

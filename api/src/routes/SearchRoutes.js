@@ -66,7 +66,7 @@ router.get('/users', authMiddleware, async (req, res) => {
     const { page, limit, offset } = getPaginationParams(req.query);
 
     if (!query) {
-      return res.status(400).json({ error: 'Необхідний параметр запиту' });
+      return res.status(400).json({ message: 'Необхідний параметр запиту' });
     }
 
     const { count, rows: users } = await models.User.findAndCountAll({
@@ -90,7 +90,7 @@ router.get('/users', authMiddleware, async (req, res) => {
       users
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -162,7 +162,7 @@ router.get('/orders', authMiddleware, async (req, res) => {
     const { page, limit, offset } = getPaginationParams(req.query);
 
     if (!query) {
-      return res.status(400).json({ error: 'Необхідний параметр запиту' });
+      return res.status(400).json({ message: 'Необхідний параметр запиту' });
     }
 
     const { count, rows: orders } = await models.Order.findAndCountAll({
@@ -181,7 +181,7 @@ router.get('/orders', authMiddleware, async (req, res) => {
       orders
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

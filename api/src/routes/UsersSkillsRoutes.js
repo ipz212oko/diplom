@@ -33,17 +33,17 @@ router.post('/', authMiddleware,ownerUserMiddleware('user'), async (req, res) =>
 
     const skill = await models.Skill.findByPk(req.body.skill_id);
     if (!skill) {
-      return res.status(400).json({ error: 'Навичка не знайдена' });
+      return res.status(400).json({ message: 'Навичка не знайдена' });
     }
     const user = await models.Skill.findByPk(req.body.user_id);
     if (!user) {
-      return res.status(400).json({ error: 'Користувача не знайдено' });
+      return res.status(400).json({ message: 'Користувача не знайдено' });
     }
     const usersSkill = await models.UsersSkill.create({ user_id:user.id, skill_id:skill.id });
 
     res.status(201).json({success:true});
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -86,7 +86,7 @@ router.get('/', async (req, res) => {
       usersSkills
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -117,7 +117,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(usersSkill);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -166,7 +166,7 @@ router.patch('/:id', authMiddleware,ownerUserMiddleware('userSkill'), async (req
     await usersSkill.update(updatedFields);
     res.status(200).json(usersSkill);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -197,7 +197,7 @@ router.delete('/:id', authMiddleware,ownerUserMiddleware('userSkill'), async (re
     await usersSkill.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

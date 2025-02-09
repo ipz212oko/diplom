@@ -66,7 +66,7 @@ router.post('/', authMiddleware,roleMiddleware('customer'),  async (req, res) =>
     const order = await models.Order.create(req.body);
     res.status(201).json({ success: true });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -109,7 +109,7 @@ router.get('/', async (req, res) => {
       orders
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -140,7 +140,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(order);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -201,7 +201,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddlew
     await order.update(updatedFields);
     res.status(200).json(order);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -232,7 +232,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddle
     await order.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

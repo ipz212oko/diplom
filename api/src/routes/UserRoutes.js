@@ -61,9 +61,9 @@ router.post('/', async (req, res) => {
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const validationErrors = error.errors.map(err => err.message);
-            res.status(400).json({ error: 'Validation error', details: validationErrors });
+            res.status(400).json({ message: 'Validation error', details: validationErrors });
         } else {
-            res.status(400).json({ error: error.message });
+            res.status(400).json({ message: error.message });
         }
     }
 });
@@ -116,7 +116,7 @@ router.get('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
             users
         });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -166,7 +166,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 
         res.status(200).json(userInfo);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -230,7 +230,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
         };
         res.status(200).json(transformedUser);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -288,7 +288,7 @@ router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
         await user.update(updatedFields);
         res.status(200).json(user);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -319,7 +319,7 @@ router.delete('/:id', authMiddleware,checkUserIdMiddleware, async (req, res) => 
         await user.destroy();
         res.status(204).send();
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -360,21 +360,20 @@ router.post('/:id/image',
   async (req, res) => {
       try {
           if (!req.file) {
-              return res.status(400).json({ error: 'Файл не завантажено' });
+              return res.status(400).json({ message: 'Файл не завантажено' });
           }
 
           const fileName = await FileService.uploadImage(req.params.id, req.file);
 
           res.status(200).json({
               success: true,
-              message: 'Зображення успішно завантажено',
-              fileName: fileName
+              message: 'Зображення успішно завантажено'
           });
       } catch (error) {
           if (error.message === 'Користувача не знайдено') {
-              return res.status(404).json({ error: error.message });
+              return res.status(404).json({ message: error.message });
           }
-          res.status(400).json({ error: error.message });
+          res.status(400).json({ message: error.message });
       }
   }
 );
@@ -418,7 +417,7 @@ router.post('/:id/pdf',
   async (req, res) => {
       try {
           if (!req.file) {
-              return res.status(400).json({ error: 'Файл не завантажено' });
+              return res.status(400).json({ message: 'Файл не завантажено' });
           }
 
           const fileName = await FileService.uploadPDF(req.params.id, req.file);
@@ -430,9 +429,9 @@ router.post('/:id/pdf',
           });
       } catch (error) {
           if (error.message === 'Користувача не знайдено') {
-              return res.status(404).json({ error: error.message });
+              return res.status(404).json({ message: error.message });
           }
-          res.status(400).json({ error: error.message });
+          res.status(400).json({ message: error.message });
       }
   }
 );
@@ -480,7 +479,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
 
         if (newPassword !== confirmPassword) {
             return res.status(400).json({
-                error: 'Новий пароль та підтвердження не співпадають'
+                message: 'Новий пароль та підтвердження не співпадають'
             });
         }
 
@@ -489,17 +488,17 @@ router.post('/change-password', authMiddleware, async (req, res) => {
 
         const user = await models.User.findOne({ where: { email: decoded.email } });
         if (!user) {
-            return res.status(404).json({ error: 'Користувача не знайдено' });
+            return res.status(404).json({ message: 'Користувача не знайдено' });
         }
 
         const isValidPassword = await argon2.verify(user.password, currentPassword);
         if (!isValidPassword) {
-            return res.status(401).json({ error: 'Поточний пароль невірний' });
+            return res.status(401).json({ message: 'Поточний пароль невірний' });
         }
 
         if (!newPassword || newPassword.length < 4) {
             return res.status(400).json({
-                error: 'Новий пароль має містити щонайменше 4 символів'
+                message: 'Новий пароль має містити щонайменше 4 символів'
             });
         }
 
@@ -514,7 +513,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 
@@ -555,7 +554,7 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
         const rating = Number(newRating);
 
         if (isNaN(rating) || rating < 0 || rating > 5) {
-            return res.status(400).json({ error: 'Рейтинг має бути числом між 0 та 5' });
+            return res.status(400).json({ message: 'Рейтинг має бути числом між 0 та 5' });
         }
 
         const user = await models.User.findByPk(req.params.id);
@@ -569,7 +568,7 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
         await user.update({ rating: roundedAverageRating });
         res.status(200).json({ success: true, rating: roundedAverageRating });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 module.exports = router;

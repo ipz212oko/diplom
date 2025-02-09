@@ -36,7 +36,7 @@ router.post('/', authMiddleware,roleMiddleware('customer'), async (req, res) => 
     const orderHistory = await models.OrderHistory.create(req.body);
     res.status(201).json({ success: true });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -79,7 +79,7 @@ router.get('/',  async (req, res) => {
       orderHistories
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -110,7 +110,7 @@ router.get('/:id',  async (req, res) => {
     }
     res.status(200).json(orderHistory);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -159,7 +159,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =>
     await orderHistory.update(updatedFields);
     res.status(200).json(orderHistory);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -190,7 +190,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =
     await orderHistory.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

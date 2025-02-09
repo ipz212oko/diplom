@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
       skills
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -80,7 +80,7 @@ router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
     const skill = await models.Skill.create(req.body);
     res.status(201).json({success:true});
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -110,7 +110,7 @@ router.get('/:id', async (req, res) => {
     }
     res.status(200).json(skill);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -159,7 +159,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =>
     await skill.update(updatedFields);
     res.status(200).json(skill);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -190,7 +190,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =
     await skill.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -245,7 +245,7 @@ router.post('/:id/image',
       });
     } catch (error) {
       res.status(error.message === 'Навичку не знайдено' ? 404 : 400)
-      .json({ error: error.message });
+      .json({ message: error.message });
     }
   });
 
