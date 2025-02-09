@@ -240,13 +240,49 @@ router.post('/:id/image',
       const fileName = await FileService.uploadSkillImage(skillId, req.file);
 
       res.status(200).json({
-        success: true,
-        fileName
+        success: true
       });
     } catch (error) {
       res.status(error.message === 'Навичку не знайдено' ? 404 : 400)
       .json({ message: error.message });
     }
   });
+
+/**
+ * @swagger
+ * /api/skills/{id}/image:
+ *   delete:
+ *     summary: Delete skill image
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the skill
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Image deleted successfully
+ *       404:
+ *         description: Навичку не знайдено
+ *       400:
+ *         description: Error during deletion
+ */
+router.delete('/:id/image',
+  authMiddleware,
+  roleMiddleware('admin'),
+  async (req, res) => {
+    try {
+      await FileService.deleteSkillImage(req.params.id);
+      res.status(200).json({
+        success: true,
+        message: 'Зображення навички успішно видалено'
+      });
+    } catch (error) {
+      res.status(error.message === 'Навичку не знайдено' ? 404 : 400)
+      .json({ message: error.message });
+    }
+  }
+);
 
 module.exports = router;
