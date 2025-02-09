@@ -33,7 +33,7 @@ router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
     const status = await models.Status.create(req.body);
     res.status(201).json({ success: true });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -76,7 +76,7 @@ router.get('/', authMiddleware, async (req, res) => {
       statuses
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -107,7 +107,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
     }
     res.status(200).json(status);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -156,7 +156,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =>
     await status.update(updatedFields);
     res.status(200).json(status);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -187,7 +187,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) =
     await status.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 

@@ -38,7 +38,7 @@ router.post('/', authMiddleware,ownerRoomMiddleware('post'), async (req, res) =>
     const room = await models.Room.create(req.body);
     res.status(201).json({ success: true });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -81,7 +81,7 @@ router.get('/', authMiddleware, roleMiddleware('admin'), async (req, res) => {
       rooms
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -111,7 +111,7 @@ router.get('/:id',authMiddleware,ownerRoomMiddleware('get'), async (req, res) =>
     }
     res.status(200).json(room);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -166,7 +166,7 @@ router.patch('/:id', authMiddleware,roleMiddleware('customer'),ownerRoomMiddlewa
     await room.update(updatedFields);
     res.status(200).json(room);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -197,7 +197,7 @@ router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerRoomMiddlew
     await room.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: error.message });
   }
 });
 
