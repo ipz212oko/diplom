@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3000;
 
 async function syncDatabase() {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ alter: true });
     console.log('All tables have been created or are already existing.');
   } catch (error) {
     console.error('Error synchronizing models:', error);
