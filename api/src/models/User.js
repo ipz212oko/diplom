@@ -109,7 +109,7 @@ const User = sequelize.define('User', {
     allowNull: true,
     validate: {
       notEmpty: {
-        msg: 'Пароль не може бути порожнім',
+        msg: 'регіон не може бути порожнім',
       },
     },
   },
