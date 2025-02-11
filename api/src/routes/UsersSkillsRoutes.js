@@ -35,13 +35,13 @@ router.post('/', authMiddleware,ownerUserMiddleware('user'), async (req, res) =>
     if (!skill) {
       return res.status(400).json({ message: 'Навичка не знайдена' });
     }
-    const user = await models.Skill.findByPk(req.body.user_id);
+    const user = await models.User.findByPk(req.body.user_id);
     if (!user) {
       return res.status(400).json({ message: 'Користувача не знайдено' });
     }
     const usersSkill = await models.UsersSkill.create({ user_id:user.id, skill_id:skill.id });
 
-    res.status(201).json({success:true});
+    res.status(201).json({success:true, id:usersSkill.id});
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -52,37 +52,20 @@ router.post('/', authMiddleware,ownerUserMiddleware('user'), async (req, res) =>
  * /api/users-skills:
  *   get:
  *     summary: Get all users' skills with pagination
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number (default is 1)
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Number of users' skills per page (default is 10)
  *     responses:
  *       200:
  *         description: List of users' skills with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
-    const { page, limit, offset } = getPaginationParams(req.query);
-
-    const { count, rows: usersSkills } = await models.UsersSkill.findAndCountAll({
-      limit,
-      offset
+    const usersSkills = await models.UsersSkill.findAll({
+      include: [{
+        model: models.Skill,
+        as: 'skill',
+        attributes: ['title']
+      }]
     });
-
     res.status(200).json({
-      total: count,
-      page,
-      limit,
-      totalPages: Math.ceil(count / limit),
       usersSkills
     });
   } catch (error) {
@@ -111,7 +94,13 @@ router.get('/', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
   try {
-    const usersSkill = await models.UsersSkill.findByPk(req.params.id);
+    const usersSkill = await models.UsersSkill.findByPk(req.params.id, {
+      include: [{
+        model: models.Skill,
+        as: 'skill',
+        attributes: ['title']
+      }]
+    });
     if (!usersSkill) {
       return res.status(404).json({ message: 'UsersSkill не знайдено' });
     }

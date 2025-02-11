@@ -19,6 +19,7 @@ const {
     CommentRoutes,
     MessagesRoutes,
     SearchRoutes,
+    RegionRoutes
 } = require("./routes");
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/order-history', OrderHistoryRoutes);
 app.use('/api/rooms', RoomsRoutes);
 app.use('/api/comments', CommentRoutes);
 app.use('/api/messages', MessagesRoutes);
+app.use('/api/regions', RegionRoutes);
 app.use('/api/search', SearchRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

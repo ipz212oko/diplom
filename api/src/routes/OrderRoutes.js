@@ -39,7 +39,7 @@ const router = express.Router();
  *                 type: number
  *                 description: Вартість замовлення
  *               region:
- *                 type: string
+ *                 type: integer
  *                 description: Регіон виконання (необов'язково)
  *               worktime:
  *                 type: string
@@ -170,7 +170,7 @@ router.get('/:id', async (req, res) => {
  *               price:
  *                 type: number
  *               region:
- *                 type: string
+ *                 type: integer
  *               worktime:
  *                 type: string
  *               description:
