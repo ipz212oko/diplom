@@ -81,7 +81,7 @@ const Order = sequelize.define('Order', {
         msg: 'region не може бути відʼємним',
       },
       notEmpty: {
-        msg: 'region обовʼязкове',
+        msg: 'region не обовʼязкове',
       },
     },
   },
