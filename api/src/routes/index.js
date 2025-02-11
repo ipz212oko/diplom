@@ -13,9 +13,11 @@ const RoomsRoutes = require('./RoomsRoutes');
 const CommentRoutes = require('./CommentRoutes');
 const MessagesRoutes = require('./MessagesRoutes');
 const SearchRoutes = require('./SearchRoutes');
+const RegionRoutes = require('./RegionRoutes');
 
 
 module.exports = {
+  RegionRoutes,
   AuthRoutes,
   UserRoutes,
   SkillRoutes,

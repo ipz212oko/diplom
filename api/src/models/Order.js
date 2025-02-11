@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Status = require('./Status');
 const User = require('./User');
+const Region = require('./Region');
 
 const Order = sequelize.define('Order', {
   id: {
@@ -69,11 +70,18 @@ const Order = sequelize.define('Order', {
     },
   },
   region: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
     validate: {
+      isInt: {
+        msg: 'region має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'region не може бути відʼємним',
+      },
       notEmpty: {
-        msg: 'region не може бути пустим',
+        msg: 'region обовʼязкове',
       },
     },
   },
@@ -123,6 +131,17 @@ User.hasMany(Order, {
 Order.belongsTo(User, {
   foreignKey: 'user_id',
   targetKey: 'id',
+});
+
+Region.hasMany(Order, {
+  foreignKey: 'region',
+  sourceKey: 'id',
+  as: 'orderRegion',
+});
+
+Order.belongsTo(Region, {
+  foreignKey: 'region',
+    as: 'orderRegion',
 });
 
 module.exports = Order;

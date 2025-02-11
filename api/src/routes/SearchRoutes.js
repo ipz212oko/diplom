@@ -17,11 +17,6 @@ const getPaginationParams = require("../utils/pagination");
  *           type: string
  *         description: Optional search query for name or surname
  *       - in: query
- *         name: region
- *         schema:
- *           type: string
- *         description: Filter by user's region
- *       - in: query
  *         name: rating
  *         schema:
  *           type: number
@@ -105,10 +100,6 @@ router.get('/users', authMiddleware, async (req, res) => {
       ];
     }
 
-    if (region) {
-      whereCondition.region = { [Op.like]: `%${region}%` };
-    }
-
     if (role && ['creator', 'customer'].includes(role)) {
       whereCondition.role = role;
     }
@@ -190,11 +181,6 @@ router.get('/users', authMiddleware, async (req, res) => {
  *           format: float
  *         description: Filter by exact price (optional)
  *       - in: query
- *         name: region
- *         schema:
- *           type: string
- *         description: Filter by region (optional)
- *       - in: query
  *         name: worktime
  *         schema:
  *           type: string
@@ -245,8 +231,6 @@ router.get('/users', authMiddleware, async (req, res) => {
  *                       price:
  *                         type: number
  *                         format: float
- *                       region:
- *                         type: string
  *                       worktime:
  *                         type: string
  *                         format: date
@@ -284,9 +268,7 @@ router.get('/orders', authMiddleware, async (req, res) => {
     if (price) {
       whereConditions.price = price;
     }
-    if (region) {
-      whereConditions.region = region;
-    }
+
     if (worktime) {
       whereConditions.worktime = worktime;
     }

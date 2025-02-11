@@ -40,6 +40,19 @@ const Message = sequelize.define('Message', {
       },
     },
   },
+  isRead: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    default: false,
+    validate: {
+      isBoolean: {
+        msg: 'isRead має бути true або false',
+      },
+      notEmpty: {
+        msg: 'isRead не може бути пустим',
+      },
+    },
+  },
   date: {
     type: DataTypes.DATE,
     allowNull: false,

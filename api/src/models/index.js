@@ -11,8 +11,10 @@ const OrdersSkill = require('./OrdersSkill');
 const UserComplain = require('./UserComplain');
 const Complaint = require('./Complaint');
 const Comment = require('./Comment');
+const Region = require('./Region');
 
 const models = {
+  Region,
   User,
   Status,
    Order,

@@ -2,14 +2,15 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
 const getPaginationParams = require("../utils/pagination");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 
 /**
  * @swagger
- * /api/messages:
+ * /api/regions:
  *   post:
- *     summary: Create a new message
+ *     summary: Create a new region
  *     requestBody:
  *       required: true
  *       content:
@@ -17,25 +18,26 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
- *               room_id:
- *                 type: integer
- *               text:
+ *               alpha2:
  *                 type: string
- *               date:
+ *                 minLength: 2
+ *                 maxLength: 2
+ *               alpha3:
  *                 type: string
- *                 format: date-time
+ *                 minLength: 3
+ *                 maxLength: 3
+ *               name:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Message created successfully
+ *         description: Region created successfully
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
-    const message = await models.Message.create(req.body);
-    res.status(201).json(message);
+    const region = await models.Region.create(req.body);
+    res.status(201).json(region);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -43,31 +45,29 @@ router.post('/', authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /api/messages:
+ * /api/regions:
  *   get:
- *     summary: Get all messages with pagination
+ *     summary: Get all regions with pagination
  *     parameters:
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Page number (default is 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Number of messages per page (default is 10)
  *     responses:
  *       200:
- *         description: List of messages with pagination metadata
+ *         description: List of regions with pagination metadata
  */
 router.get('/', async (req, res) => {
   try {
     const { page, limit, offset } = getPaginationParams(req.query);
 
-    const { count, rows: messages } = await models.Message.findAndCountAll({
+    const { count, rows: regions } = await models.Region.findAndCountAll({
       limit,
       offset
     });
@@ -77,39 +77,37 @@ router.get('/', async (req, res) => {
       page,
       limit,
       totalPages: Math.ceil(count / limit),
-      messages
+      regions
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
-
 /**
  * @swagger
- * /api/messages/{id}:
+ * /api/regions/{id}:
  *   get:
- *     summary: Get a message by ID
+ *     summary: Get a region by ID
  *     parameters:
  *       - name: id
  *         in: path
- *         description: ID of the message
  *         required: true
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Message details
+ *         description: Region details
  *       404:
- *         description: Повідомлення не знайдено
+ *         description: Region not found
  */
 router.get('/:id', async (req, res) => {
   try {
-    const message = await models.Message.findByPk(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'Повідомлення не знайдено' });
+    const region = await models.Region.findByPk(req.params.id);
+    if (!region) {
+      return res.status(404).json({ message: 'Region not found' });
     }
-    res.status(200).json(message);
+    res.status(200).json(region);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -117,13 +115,12 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /api/messages/{id}:
+ * /api/regions/{id}:
  *   patch:
- *     summary: Partially update message
+ *     summary: Partially update a region
  *     parameters:
  *       - name: id
  *         in: path
- *         description: ID of the message to update
  *         required: true
  *         schema:
  *           type: integer
@@ -134,32 +131,28 @@ router.get('/:id', async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               text:
+ *               alpha2:
  *                 type: string
- *               isRead:
- *                 type: boolean
+ *               alpha3:
+ *                 type: string
+ *               name:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Message updated successfully
+ *         description: Region updated successfully
  *       400:
  *         description: Invalid data
  *       404:
- *         description: Повідомлення не знайдено
+ *         description: Region not found
  */
-router.patch('/:id', authMiddleware, async (req, res) => {
+router.patch('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
-    const message = await models.Message.findByPk(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'Повідомлення не знайдено' });
+    const region = await models.Region.findByPk(req.params.id);
+    if (!region) {
+      return res.status(404).json({ message: 'Region not found' });
     }
-    const updatedFields = {};
-
-    if (req.body.text) updatedFields.region = req.body.text;
-    if (req.body.isRead) updatedFields.isRead = req.body.isRead;
-
-    await message.update(updatedFields);
-
-    res.status(200).json(message);
+    await region.update(req.body);
+    res.status(200).json(region);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -167,29 +160,28 @@ router.patch('/:id', authMiddleware, async (req, res) => {
 
 /**
  * @swagger
- * /api/messages/{id}:
+ * /api/regions/{id}:
  *   delete:
- *     summary: Delete message
+ *     summary: Delete a region
  *     parameters:
  *       - name: id
  *         in: path
- *         description: ID of the message to delete
  *         required: true
  *         schema:
  *           type: integer
  *     responses:
  *       204:
- *         description: Message deleted successfully
+ *         description: Region deleted successfully
  *       404:
- *         description: Повідомлення не знайдено
+ *         description: Region not found
  */
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware,roleMiddleware('admin'), async (req, res) => {
   try {
-    const message = await models.Message.findByPk(req.params.id);
-    if (!message) {
-      return res.status(404).json({ message: 'Повідомлення не знайдено' });
+    const region = await models.Region.findByPk(req.params.id);
+    if (!region) {
+      return res.status(404).json({ message: 'Region not found' });
     }
-    await message.destroy();
+    await region.destroy();
     res.status(204).send();
   } catch (error) {
     res.status(400).json({ message: error.message });

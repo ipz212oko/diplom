@@ -12,7 +12,6 @@ const { models } = require("../models");
 const { getTokenFromHeader,generateToken } = require("../utils/tokenUtils");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const getPaginationParams = require("../utils/pagination");
-const { sendEmail } = require("../services/emailService");
 
 const router = express.Router();
 
@@ -35,7 +34,7 @@ const router = express.Router();
  *               email:
  *                 type: string
  *               region:
- *                 type: string
+ *                 type: integer
  *               password:
  *                 type: string
  *               role:
@@ -222,6 +221,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
             email: user.email,
             role: user.role,
             file: user.file,
+            region: user.region,
             image: user.image,
             description: user.description,
             rating: user.rating,
@@ -262,7 +262,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
  *               surname:
  *                 type: string
  *               region:
- *                 type: string
+ *                 type: integer
  *               email:
  *                 type: string
  *               password:
@@ -291,9 +291,10 @@ router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
         if (req.body.email) updatedFields.email = req.body.email;
         if (req.body.password) updatedFields.password = req.body.password;
         if (req.body.description) updatedFields.description = req.body.description;
+        if (req.body.region) updatedFields.region = req.body.region;
 
         await user.update(updatedFields);
-        res.status(200).json(user);
+        res.status(200).json({ success: true});
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -651,67 +652,6 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
 
         await user.update({ rating: roundedAverageRating });
         res.status(200).json({ success: true, rating: roundedAverageRating });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
-
-/**
- * @swagger
- * /api/users/send-email:
- *   post:
- *     summary: Send an email
- *     description: Send an email to a specified address with a subject and text content
- *     parameters:
- *       - in: body
- *         name: email
- *         description: Email details
- *         required: true
- *         schema:
- *           type: object
- *           properties:
- *             subject:
- *               type: string
- *               description: The subject of the email
- *               example: "Test Email"
- *             text:
- *               type: string
- *               description: The text body of the email
- *               example: "This is a test email."
- *     responses:
- *       200:
- *         description: Email sent successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: 'Email sent successfully!'
- *                 response:
- *                   type: string
- *                   example: '250 2.0.0 OK ...'
- *       500:
- *         description: Error sending email
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: 'Error sending email'
- *                 error:
- *                   type: string
- *                   example: 'Authentication failed'
- */
-router.post('/send-email', async (req, res) => {
-    const { subject, text } = req.body;
-
-    try {
-        const response = await sendEmail('krosherobrine@gmail.com', subject, text);
-        res.status(200).json({ message: 'Email sent successfully!', response });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

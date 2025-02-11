@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const argon2 = require('argon2');
+const Region = require("./Region");
 
 const User = sequelize.define('User', {
   id: {
@@ -59,7 +60,7 @@ const User = sequelize.define('User', {
         msg: 'Роль не може бути порожньою',
       },
       isIn: {
-        args: [['creator', 'customer']],
+        args: [['creator', 'customer','admin']],
         msg: 'Недопустима роль. Доступні варіанти: creator, customer',
       },
     },
@@ -105,11 +106,18 @@ const User = sequelize.define('User', {
     },
   },
   region: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
     validate: {
+      isInt: {
+        msg: 'region має бути цілим числом',
+      },
+      min: {
+        args: [0],
+        msg: 'region не може бути відʼємним',
+      },
       notEmpty: {
-        msg: 'регіон не може бути порожнім',
+        msg: 'region обовʼязкове',
       },
     },
   },
@@ -133,6 +141,18 @@ const User = sequelize.define('User', {
       }
     },
   },
+});
+
+Region.hasMany(User, {
+  foreignKey: 'region',
+  sourceKey: 'id',
+  as: 'userRegion',
+});
+
+User.belongsTo(Region, {
+  foreignKey: 'region',
+  targetKey: 'id',
+  as: 'userRegion',
 });
 
 module.exports = User;
