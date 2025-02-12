@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { getTokenFromHeader } = require('../utils/tokenUtils');
 
 const checkUserIdMiddleware = async (req, res, next) => {
-  const userId = req.params.id;
+  const userId = req.params.id||req.params.userId;
   const  token = getTokenFromHeader(req);
   const user = await models.User.findOne({ where: { id:userId } });
 

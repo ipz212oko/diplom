@@ -35,6 +35,11 @@ const getPaginationParams = require("../utils/pagination");
  *           type: string
  *         description: Filter by user's skills (JSON array of IDs)
  *       - in: query
+ *         name: region
+ *         schema:
+ *           type: string
+ *         description: Filter by user's region (JSON array of region IDs)
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
@@ -110,6 +115,20 @@ router.get('/users', authMiddleware, async (req, res) => {
         whereCondition.rating = ratingValue;
       }
     }
+    if (region) {
+      try {
+        let regionIds = JSON.parse(region);
+        if (Array.isArray(regionIds) && regionIds.length > 0 && !regionIds.some(isNaN)) {
+          whereCondition.region = {
+            [Op.in]: regionIds
+          };
+        } else {
+          return res.status(400).json({ message: 'Invalid regions format' });
+        }
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid regions format' });
+      }
+    }
 
     const queryOptions = {
       where: whereCondition,
@@ -117,6 +136,11 @@ router.get('/users', authMiddleware, async (req, res) => {
       limit,
       offset,
       distinct: true,
+      include: [{
+        model: models.Region,
+        as: 'userRegion',
+        attributes: ['id', 'name']
+      }]
     };
 
     if (skills) {
@@ -187,6 +211,11 @@ router.get('/users', authMiddleware, async (req, res) => {
  *           format: date
  *         description: Filter by worktime date (optional)
  *       - in: query
+ *         name: region
+ *         schema:
+ *           type: string
+ *         description: Filter by region IDs (JSON array of region IDs)
+ *       - in: query
  *         name: skills
  *         schema:
  *           type: string
@@ -236,6 +265,13 @@ router.get('/users', authMiddleware, async (req, res) => {
  *                         format: date
  *                       description:
  *                         type: string
+ *                       region:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
  *                       skills:
  *                         type: array
  *                         items:
@@ -259,7 +295,8 @@ router.get('/orders', authMiddleware, async (req, res) => {
       limit,
       offset,
       distinct: true,
-      subQuery: false
+      subQuery: false,
+      include: []
     };
 
     if (query) {
@@ -268,10 +305,30 @@ router.get('/orders', authMiddleware, async (req, res) => {
     if (price) {
       whereConditions.price = price;
     }
-
     if (worktime) {
       whereConditions.worktime = worktime;
     }
+
+    if (region) {
+      try {
+        let regionIds = JSON.parse(region);
+        if (Array.isArray(regionIds) && regionIds.length > 0 && !regionIds.some(isNaN)) {
+          whereConditions.region = {
+            [Op.in]: regionIds
+          };
+        } else {
+          return res.status(400).json({ message: 'Invalid regions format' });
+        }
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid regions format' });
+      }
+    }
+
+    queryOptions.include.push({
+      model: models.Region,
+      as: 'orderRegion',
+      attributes: ['id', 'name']
+    });
 
     if (skills) {
       let skillIds;
@@ -282,7 +339,7 @@ router.get('/orders', authMiddleware, async (req, res) => {
       }
 
       if (Array.isArray(skillIds) && skillIds.length > 0 && !skillIds.some(isNaN)) {
-        queryOptions.include = [{
+        queryOptions.include.push({
           model: models.OrdersSkill,
           as: 'orderSkills',
           required: true,
@@ -296,7 +353,7 @@ router.get('/orders', authMiddleware, async (req, res) => {
             as: 'skill',
             attributes: ['id', 'title']
           }]
-        }];
+        });
       } else {
         return res.status(400).json({ message: 'Invalid skills format' });
       }

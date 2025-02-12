@@ -6,15 +6,18 @@ const ownerOrderMiddleware  = (field = "order") =>  {
   return async (req, res, next) => {
     try {
       let orderId = null;
+
       if(field === "order"){
-         orderId = req.body.order_id || req.params.id;
+         orderId = req.body.order_id || req.params.id|| req.params.orderId;
       }else if(field === "orderSkill"){
         const ordersSkill = await models.OrdersSkill.findByPk(req.params.id);
         orderId =  ordersSkill.order_id;
       }
+
       const order = await models.Order.findByPk(orderId);
       const token = getTokenFromHeader(req);
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
       if (!order) {
         return res.status(404).json({
           message: 'Замовлення не знайдено'
