@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await axiosInstance.get("/users/me");
       setUser(data);
     } catch (error) {
+      logout();
       console.error("Error fetch user data:", error);
     }
   }
@@ -44,11 +45,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  function logout() {
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
-  };
+    window.location.replace("/");
+  }
 
   const hasPermission = (roles) => {
     return Array.isArray(roles) ? roles.includes(user?.role) : user?.role === roles;

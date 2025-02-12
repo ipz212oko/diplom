@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router"
 import { ChakraProvider } from "@/providers/ChakraProvider.jsx"
 import App from './App.jsx'
 import { AuthProvider } from "@/providers/AuthProvider.jsx";
+import { Toaster } from "@/components/ui/toaster.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -11,6 +12,7 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <ChakraProvider>
           <App />
+          <Toaster/>
         </ChakraProvider>
       </BrowserRouter>
     </AuthProvider>

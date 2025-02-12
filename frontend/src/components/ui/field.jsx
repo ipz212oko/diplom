@@ -1,4 +1,4 @@
-import { Field as ChakraField, Input } from "@chakra-ui/react";
+import { Field as ChakraField, Input, Textarea } from "@chakra-ui/react";
 import { useFormContext } from 'react-hook-form';
 import * as React from 'react'
 import { PasswordInput } from "@/components/ui/password-input.jsx";
@@ -36,3 +36,4 @@ export const FormField = function ({ label, type = 'text',  name, component: Com
 
 export const InputField = (props) => <FormField component={Input} {...props}/>;
 export const PasswordField = (props) => <FormField component={PasswordInput} {...props}/>;
+export const TextField = (props) => <FormField component={Textarea} {...props}/>;

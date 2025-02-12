@@ -1,5 +1,4 @@
 import {
-  Button,
   HStack,
   Image,
   SimpleGrid,
@@ -7,7 +6,8 @@ import {
   Box,
   Text,
   Heading,
-  Center, Container
+  Center,
+  Container
 } from "@chakra-ui/react";
 import { Link } from "react-router";
 import ordersImage from "@/assets/images/orders.svg";

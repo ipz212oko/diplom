@@ -1,4 +1,6 @@
 import { createSystem, defaultConfig, defineConfig, defineRecipe } from "@chakra-ui/react";
+import { comboBoxSlotRecipe } from "@/config/recipes/combobox.js";
+import { tagsInputSlotRecipe } from "@/config/recipes/tags-input.js";
 
 const linkRecipe = defineRecipe({
   base: {
@@ -18,11 +20,17 @@ const config = defineConfig({
       "--global-font-body": "'Montserrat', sans-serif"
     },
     "html, body": {
-      h: "100%",
+      minH: "100vh",
+    },
+    "body": {
+      display: "flex",
+      flexDirection: "column",
     },
     "#root": {
-      h: "100%",
-      bg: "#fbfbfd"
+      display: "flex",
+      flexDirection: "column",
+      flex: "1",
+      bg: "#fbfbfd",
     }
   },
   theme: {
@@ -30,6 +38,10 @@ const config = defineConfig({
       link: linkRecipe,
       heading: headingRecipe,
     },
+    slotRecipes: {
+      combobox: comboBoxSlotRecipe,
+      tagsInput: tagsInputSlotRecipe,
+    }
   },
 })
 
