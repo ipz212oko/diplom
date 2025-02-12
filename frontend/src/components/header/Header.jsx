@@ -5,7 +5,8 @@ import {
   Flex,
   HStack,
   Link as BaseLink,
-  Stack
+  Stack,
+  Avatar,
 } from "@chakra-ui/react";
 import {
   DrawerBackdrop,
@@ -16,9 +17,10 @@ import {
   DrawerTitle,
   DrawerTrigger
 } from "@/components/ui/drawer";
-import { LuMenu } from "react-icons/lu";
+import { LuMenu, LuUserRound } from "react-icons/lu";
 import { Link } from "react-router";
 import { useAuth } from "@/providers/AuthProvider.jsx";
+import { MenuContent, MenuItem, MenuRoot, MenuSeparator, MenuTrigger } from "@/components/ui/menu.jsx";
 import { Logout } from "@/components/ui/logout.jsx";
 
 function NavLinks(props) {
@@ -58,7 +60,23 @@ export function Header() {
           </DrawerRoot>
           <HStack ml="auto">
             {user ? (
-              <Logout colorPalette="blue" />
+              <MenuRoot positioning={{ placement: "bottom-end" }}>
+                <MenuTrigger outline="none">
+                  <Avatar.Root>
+                    <Avatar.Fallback asChild><LuUserRound style={{ width: "24px", height: "24px"}}/></Avatar.Fallback>
+                    <Avatar.Image src={user?.image} />
+                  </Avatar.Root>
+                </MenuTrigger>
+                <MenuContent>
+                  <MenuItem value="account" cursor="pointer" asChild>
+                    <Link to="/account">Акаунт</Link>
+                  </MenuItem>
+                  <MenuSeparator />
+                  <MenuItem value="exit">
+                    <Logout size="sm" variant="plain" justifyContent="start" p={0} w="full" h="auto" lineHeight="normal" fontWeight="normal" />
+                  </MenuItem>
+                </MenuContent>
+              </MenuRoot>
             ) : (
               <>
                 <Button as={Link} to="/login" fontSize="md" variant="ghost">Вхід</Button>

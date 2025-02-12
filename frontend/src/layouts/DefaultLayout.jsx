@@ -4,7 +4,7 @@ import { Header } from "@/components/header/Header.jsx";
 
 export function DefaultLayout() {
   return (
-    <Box display="flex" flexDirection="column" minH="full">
+    <Box display="flex" flexDirection="column" flex="1">
       <Header />
       <Box as="main" display="flex" flexDirection="column" flex="1">
         <Outlet/>
