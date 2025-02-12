@@ -1,7 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
-const getPaginationParams = require("../utils/pagination");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
@@ -65,18 +64,9 @@ router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
  */
 router.get('/', async (req, res) => {
   try {
-    const { page, limit, offset } = getPaginationParams(req.query);
-
-    const { count, rows: regions } = await models.Region.findAndCountAll({
-      limit,
-      offset
-    });
+    const regions  = await models.Region.findAll();
 
     res.status(200).json({
-      total: count,
-      page,
-      limit,
-      totalPages: Math.ceil(count / limit),
       regions
     });
   } catch (error) {

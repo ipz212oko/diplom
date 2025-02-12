@@ -4,7 +4,6 @@ const roleMiddleware = require("../middlewares/roleMiddleware");
 const FileService = require('../services/FileService');
 const upload = require('../middlewares/uploadMiddleware');
 const { models } = require("../models");
-const getPaginationParams = require("../utils/pagination");
 
 const router = express.Router();
 
@@ -32,18 +31,9 @@ const router = express.Router();
  */
 router.get('/', async (req, res) => {
   try {
-    const { page, limit, offset } = getPaginationParams(req.query);
-
-    const { count, rows: skills } = await models.Skill.findAndCountAll({
-      limit,
-      offset
-    });
+    const  skills  = await models.Skill.findAll();
 
     res.status(200).json({
-      total: count,
-      page,
-      limit,
-      totalPages: Math.ceil(count / limit),
       skills
     });
   } catch (error) {

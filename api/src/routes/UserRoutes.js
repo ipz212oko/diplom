@@ -5,7 +5,6 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const checkUserIdMiddleware = require("../middlewares/checkUserIdMiddleware");
 const uploadPDF = require('../middlewares/uploadPDFMiddleware');
 const upload = require('../middlewares/uploadMiddleware');
-const isOwnerMiddleware = require('../middlewares/isOwnerMiddleware');
 const calculateAverageRating = require('../utils/calculateAverageRating');
 const FileService = require('../services/FileService');
 const { models } = require("../models");
@@ -142,14 +141,20 @@ router.get('/me', authMiddleware, async (req, res) => {
         const user = await models.User.findOne({
             attributes: { exclude: ['password'] },
             where: { email: decoded.email },
-            include: [{
-                model: models.UsersSkill,
-                as: 'userSkills',
-                include: [{
-                    model: models.Skill,
-                    as: 'skill'
-                }]
-            }]
+            include: [
+                {
+                    model: models.UsersSkill,
+                    as: 'userSkills',
+                    include: [{
+                        model: models.Skill,
+                        as: 'skill'
+                    }]
+                },
+                {
+                    model: models.Region,
+                    as: 'userRegion'
+                }
+            ]
         });
 
         if (!user) {
@@ -160,7 +165,7 @@ router.get('/me', authMiddleware, async (req, res) => {
             id: user.id,
             name: user.name,
             surname: user.surname,
-            region: user.region,
+            region: user.userRegion ? { id: user.userRegion.id, name: user.userRegion.name } : null,
             role: user.role,
             email: user.email,
             image: user.image,
@@ -198,15 +203,22 @@ router.get('/:id',authMiddleware, async (req, res) => {
 
         const user = await models.User.findByPk(req.params.id, {
             attributes: { exclude: ['password'] },
-            include: [{
-                model: models.UsersSkill,
-                as: 'userSkills',
-                include: [{
-                    model: models.Skill,
-                    as: 'skill'
-                }]
-            }]
+            include: [
+                {
+                    model: models.UsersSkill,
+                    as: 'userSkills',
+                    include: [{
+                        model: models.Skill,
+                        as: 'skill'
+                    }]
+                },
+                {
+                    model: models.Region,
+                    as: 'userRegion'
+                }
+            ]
         });
+
         if (!user) {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
@@ -221,7 +233,7 @@ router.get('/:id',authMiddleware, async (req, res) => {
             email: user.email,
             role: user.role,
             file: user.file,
-            region: user.region,
+            region: user.userRegion ? { id: user.userRegion.id, name: user.userRegion.name } : null,
             image: user.image,
             description: user.description,
             rating: user.rating,
@@ -633,7 +645,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
  *       404:
  *         description: User not found
  */
-router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) => {
+router.patch('/:id/rating', authMiddleware, checkUserIdMiddleware, async (req, res) => {
     try {
         const { newRating } = req.body;
         const rating = Number(newRating);
@@ -652,6 +664,99 @@ router.patch('/:id/rating', authMiddleware, isOwnerMiddleware, async (req, res) 
 
         await user.update({ rating: roundedAverageRating });
         res.status(200).json({ success: true, rating: roundedAverageRating });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
+/**
+ * @swagger
+ * /api/users/{userId}/skills/{skillId}:
+ *   delete:
+ *     summary: Видалення зв'язку користувача та навички
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: ID користувача
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: skillId
+ *         in: path
+ *         description: ID навички
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Зв'язок успішно видалено
+ *       404:
+ *         description: Зв'язок не знайдено
+ */
+router.delete('/:userId/skills/:skillId', authMiddleware, checkUserIdMiddleware, async (req, res) => {
+    try {
+        const { userId, skillId } = req.params;
+
+        const usersSkill = await models.UsersSkill.findOne({
+            where: { user_id:userId, skill_id:skillId }
+        });
+
+        if (!usersSkill) {
+            return res.status(404).json({ message: 'Зв\'язок користувача і навички не знайдено' });
+        }
+
+        await usersSkill.destroy();
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/users/{userId}/skills/{skillId}:
+ *   post:
+ *     summary: Додавання зв'язку користувача та навички
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: ID користувача
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: skillId
+ *         in: path
+ *         description: ID навички
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       201:
+ *         description: Зв'язок успішно створено
+ *       409:
+ *         description: Зв'язок уже існує
+ *       400:
+ *         description: Невірний запит
+ */
+router.post('/:userId/skills/:skillId', authMiddleware, checkUserIdMiddleware, async (req, res) => {
+    try {
+        const { userId, skillId } = req.params;
+
+        const existingUsersSkill = await models.UsersSkill.findOne({
+            where: { user_id: userId, skill_id: skillId }
+        });
+
+        if (existingUsersSkill) {
+            return res.status(409).json({ message: 'Зв\'язок користувача і навички вже існує' });
+        }
+
+        const newUsersSkill = await models.UsersSkill.create({
+            user_id: userId,
+            skill_id: skillId
+        });
+
+        res.status(201).json(newUsersSkill);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

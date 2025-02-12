@@ -113,7 +113,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 /**
  * @swagger
  * /api/orders/{id}:
@@ -230,6 +229,100 @@ router.delete('/:id', authMiddleware,roleMiddleware('customer'),ownerOrderMiddle
       return res.status(404).json({ message: 'Замовлення не знайдено' });
     }
     await order.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/orders/{orderId}/skills/{skillId}:
+ *   post:
+ *     summary: Додавання зв'язку замовлення та навички
+ *     parameters:
+ *       - name: orderId
+ *         in: path
+ *         description: ID замовлення
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: skillId
+ *         in: path
+ *         description: ID навички
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       201:
+ *         description: Зв'язок успішно створено
+ *       409:
+ *         description: Зв'язок уже існує
+ *       400:
+ *         description: Невірний запит
+ */
+router.post('/:orderId/skills/:skillId', authMiddleware, roleMiddleware('customer'),ownerOrderMiddleware('order'),  async (req, res) => {
+  try {
+    const { orderId, skillId } = req.params;
+
+    const existingOrderSkill = await models.OrdersSkill.findOne({
+      where: { order_id: orderId, skill_id: skillId }
+    });
+
+    if (existingOrderSkill) {
+      return res.status(409).json({ message: 'Зв\'язок замовлення і навички вже існує' });
+    }
+
+    const newOrderSkill = await models.OrdersSkill.create({
+      order_id: orderId,
+      skill_id: skillId
+    });
+
+    res.status(201).json(newOrderSkill);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/orders/{orderId}/skills/{skillId}:
+ *   delete:
+ *     summary: Видалення зв'язку замовлення та навички
+ *     parameters:
+ *       - name: orderId
+ *         in: path
+ *         description: ID замовлення
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: skillId
+ *         in: path
+ *         description: ID навички
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Зв'язок успішно видалено
+ *       404:
+ *         description: Зв'язок не знайдено
+ *       400:
+ *         description: Невірний запит
+ */
+router.delete('/:orderId/skills/:skillId', authMiddleware, roleMiddleware('customer'),ownerOrderMiddleware('order'),  async (req, res) => {
+  try {
+    const { orderId, skillId } = req.params;
+
+    const orderSkill = await models.OrdersSkill.findOne({
+      where: { order_id: orderId, skill_id: skillId }
+    });
+
+    if (!orderSkill) {
+      return res.status(404).json({ message: 'Зв\'язок замовлення і навички не знайдено' });
+    }
+
+    await orderSkill.destroy();
     res.status(204).send();
   } catch (error) {
     res.status(400).json({ message: error.message });
