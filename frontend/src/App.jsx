@@ -6,6 +6,7 @@ import { SignUp } from "@/pages/SignUp.jsx";
 import { Login } from "@/pages/Login.jsx";
 import { ProtectedRoute } from "@/components/ui/protected-route.jsx";
 import { Account } from "@/pages/Account.jsx";
+import { Profile } from "@/pages/Profile.jsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="sign-up" element={<SignUp/>} />
         <Route path="login" element={<Login/>} />
         <Route path="not-found" element={<NotFound/>}/>
+        <Route path="profile/:id" element={<Profile/>}/>
         <Route element={<ProtectedRoute allowedRoles={["creator", "customer"]} />}>
           <Route path="account" element={<Account/>} />
         </Route>
