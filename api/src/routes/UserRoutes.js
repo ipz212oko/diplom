@@ -196,10 +196,13 @@ router.get('/me', authMiddleware, async (req, res) => {
  *       404:
  *         description: Користувача не знайдено
  */
-router.get('/:id',authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const  token = getTokenFromHeader(req);
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        let decoded = null;
+        if(token!=null) {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        }
 
         const user = await models.User.findByPk(req.params.id, {
             attributes: { exclude: ['password'] },
@@ -222,7 +225,11 @@ router.get('/:id',authMiddleware, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
-        if (decoded.role !=='admin' &&user.role === 'admin') {
+        if (user.role === 'admin' && !decoded) {
+            return res.status(404).json({ message: 'Користувача не знайдено' });
+        }
+
+        if (decoded && decoded.role !== 'admin' && user.role === 'admin') {
             return res.status(404).json({ message: 'Користувача не знайдено' });
         }
 
