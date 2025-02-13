@@ -302,7 +302,10 @@ router.patch('/:id',authMiddleware,checkUserIdMiddleware, async (req, res) => {
         if (req.body.surname) updatedFields.surname = req.body.surname;
         if (req.body.email) updatedFields.email = req.body.email;
         if (req.body.password) updatedFields.password = req.body.password;
-        if (req.body.description) updatedFields.description = req.body.description;
+        if (req.body.description !== undefined) {
+            updatedFields.description = req.body.description;
+        }
+
         if (req.body.region) updatedFields.region = req.body.region;
 
         await user.update(updatedFields);

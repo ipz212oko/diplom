@@ -46,21 +46,10 @@ router.post('/', authMiddleware,roleMiddleware('admin'), async (req, res) => {
  * @swagger
  * /api/regions:
  *   get:
- *     summary: Get all regions with pagination
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
+ *     summary: Get all regions
  *     responses:
  *       200:
- *         description: List of regions with pagination metadata
+ *         description: List of regions
  */
 router.get('/', async (req, res) => {
   try {
