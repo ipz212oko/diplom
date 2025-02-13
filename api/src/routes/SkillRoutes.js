@@ -11,23 +11,10 @@ const router = express.Router();
  * @swagger
  * /api/skills:
  *   get:
- *     summary: Get all skills with pagination
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number (default is 1)
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Number of skills per page (default is 10)
+ *     summary: Get all skills
  *     responses:
  *       200:
- *         description: List of skills with pagination metadata
+ *         description: List of skills
  */
 router.get('/', async (req, res) => {
   try {
