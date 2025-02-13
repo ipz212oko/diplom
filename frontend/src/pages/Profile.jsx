@@ -1,15 +1,17 @@
 import { Avatar, Container, Flex, VStack, Text, Separator, HStack, Badge, Link as BaseLink } from "@chakra-ui/react";
 import { LuExternalLink, LuUserRound } from "react-icons/lu";
-import { Link, useParams } from "react-router";
+import { Link, Navigate, useParams } from "react-router";
 import { useApi } from "@/hooks/useApi.js";
 import { Loader } from "@/components/ui/loader.jsx";
 import { Rating } from "@/components/ui/rating.jsx";
 
 export function Profile() {
   const { id } = useParams();
-  const { data: userData, loading } = useApi(`/users/${id}`);
+  const { data: userData, loading, error } = useApi(`/users/${id}`);
 
   if (loading) return <Loader h={64}/>;
+
+  if (error?.statusCode === 404) return <Navigate to='/not-found' />;
 
   const { surname, name, region, rating, skills, description, role, file } = userData;
   let roleName = null;
