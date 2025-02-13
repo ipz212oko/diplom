@@ -3,15 +3,17 @@ import { axiosInstance } from "@/utils/axiosInstance.js";
 
 export const useApi = (endpoint, requestOptions) => {
   const {
-    force = true,
+    force,
     method = 'GET',
     defaultValue = null,
     ...options
   } = requestOptions || {};
 
+  const forceRequest = force ?? method === "GET";
+
   const [data, setData] = useState(defaultValue);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(method === "GET" && force);
+  const [loading, setLoading] = useState(forceRequest);
 
   const request = async (payload = null) => {
     setError(null);
@@ -28,14 +30,17 @@ export const useApi = (endpoint, requestOptions) => {
       return response.data;
     } catch (error) {
       setError(error);
-      throw error;
+
+      if (!forceRequest) {
+        throw error;
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (method === "GET" && force) {
+    if (forceRequest) {
       request();
     }
   }, []);

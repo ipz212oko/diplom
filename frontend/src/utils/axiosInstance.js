@@ -16,6 +16,7 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject({
+      statusCode: errorStatus,
       message: errorMessage || "Упс, щось пішло не так",
     });
   }
