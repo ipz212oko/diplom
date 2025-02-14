@@ -153,6 +153,10 @@ router.get('/me', authMiddleware, async (req, res) => {
                 {
                     model: models.Region,
                     as: 'userRegion'
+                },
+                {
+                    model: models.Comment,
+                    as: 'userComments'
                 }
             ]
         });
@@ -169,7 +173,18 @@ router.get('/me', authMiddleware, async (req, res) => {
             role: user.role,
             email: user.email,
             image: user.image,
-            skills: user.userSkills.map(userSkill => userSkill.skill)
+            skills: user.userSkills.map(userSkill => userSkill.skill),
+            comments: user.userComments.length > 0
+              ? user.userComments.map(comment => ({
+                  id: comment.id,
+                  text: comment.text,
+                  user_id: comment.user_id,
+                  parent_id: comment.parent_id,
+                  sender_id: comment.sender_id,
+                  sendtime: comment.sendtime,
+              }))
+              : []
+            ,
         };
 
         res.status(200).json(userInfo);
@@ -218,6 +233,10 @@ router.get('/:id', async (req, res) => {
                 {
                     model: models.Region,
                     as: 'userRegion'
+                },
+                {
+                    model: models.Comment,
+                    as: 'userComments'
                 }
             ]
         });
@@ -249,7 +268,18 @@ router.get('/:id', async (req, res) => {
                 title: userSkill.skill.title,
                 image: userSkill.skill.image,
                 description: userSkill.skill.description
-            }))
+            })),
+            comments: user.userComments.length > 0
+              ? user.userComments.map(comment => ({
+                  id: comment.id,
+                  text: comment.text,
+                  user_id: comment.user_id,
+                  parent_id: comment.parent_id,
+                  sender_id: comment.sender_id,
+                  sendtime: comment.sendtime,
+              }))
+              : []
+            ,
         };
         res.status(200).json(transformedUser);
     } catch (error) {

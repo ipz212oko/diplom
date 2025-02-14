@@ -2,7 +2,7 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
-const getPaginationParams = require("../utils/pagination");
+const ownerUserMiddleware = require("../middlewares/ownerUserMiddleware");
 
 const router = express.Router();
 
@@ -22,6 +22,8 @@ const router = express.Router();
  *                 type: integer
  *               parent_id:
  *                 type: integer
+ *               sender_id:
+ *                 type: integer
  *               text:
  *                 type: string
  *               sendtime:
@@ -33,7 +35,7 @@ const router = express.Router();
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware,ownerUserMiddleware('userSender'), async (req, res) => {
   try {
     const comment = await models.Comment.create(req.body);
     res.status(201).json(comment);
@@ -66,18 +68,9 @@ router.post('/', authMiddleware, async (req, res) => {
  */
 router.get('/', async (req, res) => {
   try {
-    const { page, limit, offset } = getPaginationParams(req.query);
-
-    const { count, rows: comments } = await models.Comment.findAndCountAll({
-      limit,
-      offset
-    });
+    const comments = await models.Comment.findAll();
 
     res.status(200).json({
-      total: count,
-      page,
-      limit,
-      totalPages: Math.ceil(count / limit),
       comments
     });
   } catch (error) {

@@ -25,6 +25,18 @@ const Comment = sequelize.define('Comment', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  sender_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      isInt: {
+        msg: 'sender_id має бути цілим числом',
+      },
+      notNull: {
+        msg: 'sender_id обовʼязкове',
+      },
+    },
+  },
   text: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -66,6 +78,18 @@ Comment.belongsTo(User, {
   foreignKey: 'user_id',
   targetKey: 'id',
   as: 'user',
+});
+
+User.hasMany(Comment, {
+  foreignKey: 'sender_id',
+  sourceKey: 'id',
+  as: 'senderComments',
+});
+
+Comment.belongsTo(User, {
+  foreignKey: 'sender_id',
+  targetKey: 'id',
+  as: 'sender',
 });
 
 Comment.hasMany(Comment, {

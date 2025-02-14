@@ -1,7 +1,6 @@
 const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const { models } = require("../models");
-const getPaginationParams = require("../utils/pagination");
 const ownerUserMiddleware = require("../middlewares/ownerUserMiddleware");
 
 const router = express.Router();
