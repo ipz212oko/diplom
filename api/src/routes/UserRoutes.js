@@ -156,7 +156,12 @@ router.get('/me', authMiddleware, async (req, res) => {
                 },
                 {
                     model: models.Comment,
-                    as: 'userComments'
+                    as: 'userComments',
+                    include: [{
+                        model: models.User,
+                        as: 'sender',
+                        attributes: ['id', 'image', 'name', 'surname']
+                    }]
                 }
             ]
         });
@@ -180,11 +185,15 @@ router.get('/me', authMiddleware, async (req, res) => {
                   text: comment.text,
                   user_id: comment.user_id,
                   parent_id: comment.parent_id,
-                  sender_id: comment.sender_id,
                   sendtime: comment.sendtime,
+                  sender: comment.sender ? {
+                      id: comment.sender.id,
+                      image: comment.sender.image,
+                      name: comment.sender.name,
+                      surname: comment.sender.surname
+                  } : null
               }))
-              : []
-            ,
+              : [],
         };
 
         res.status(200).json(userInfo);
@@ -213,9 +222,9 @@ router.get('/me', authMiddleware, async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
     try {
-        const  token = getTokenFromHeader(req);
+        const token = getTokenFromHeader(req);
         let decoded = null;
-        if(token!=null) {
+        if (token) {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
         }
 
@@ -236,7 +245,12 @@ router.get('/:id', async (req, res) => {
                 },
                 {
                     model: models.Comment,
-                    as: 'userComments'
+                    as: 'userComments',
+                    include: [{
+                        model: models.User,
+                        as: 'sender',
+                        attributes: ['id', 'image', 'name', 'surname']
+                    }]
                 }
             ]
         });
@@ -275,17 +289,23 @@ router.get('/:id', async (req, res) => {
                   text: comment.text,
                   user_id: comment.user_id,
                   parent_id: comment.parent_id,
-                  sender_id: comment.sender_id,
                   sendtime: comment.sendtime,
+                  sender: comment.sender ? {
+                      id: comment.sender.id,
+                      image: comment.sender.image,
+                      name: comment.sender.name,
+                      surname: comment.sender.surname
+                  } : null
               }))
-              : []
-            ,
+              : [],
         };
+
         res.status(200).json(transformedUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 /**
  * @swagger

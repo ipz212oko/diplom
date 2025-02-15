@@ -2,7 +2,8 @@ const express = require('express');
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const { models } = require("../models");
-const ownerUserMiddleware = require("../middlewares/ownerUserMiddleware");
+const { getTokenFromHeader } = require("../utils/tokenUtils");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -20,29 +21,29 @@ const router = express.Router();
  *             properties:
  *               user_id:
  *                 type: integer
- *               parent_id:
- *                 type: integer
- *               sender_id:
- *                 type: integer
  *               text:
  *                 type: string
- *               sendtime:
- *                 type: string
- *                 format: date
  *     responses:
  *       201:
  *         description: Comment created successfully
  *       400:
  *         description: Bad Request
  */
-router.post('/', authMiddleware,ownerUserMiddleware('userSender'), async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
-    const comment = await models.Comment.create(req.body);
+    const { user_id, text } = req.body;
+    const token = getTokenFromHeader(req);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const sender_id =decoded.id;
+    const sendtime = new Date().toISOString();
+
+    const comment = await models.Comment.create({ user_id, text, sender_id, sendtime });
     res.status(201).json(comment);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
+
 
 /**
  * @swagger
