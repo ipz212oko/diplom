@@ -11,8 +11,6 @@ const ownerUserMiddleware  = (field = "user") => {
     }else if(field === "userSkill"){
       const usersSkill = await models.UsersSkill.findByPk(req.params.id);
       userId =  usersSkill.user_id;
-    }else if(field === "userSender"){
-      userId=req.body.sender_id;
     }
 
     const user = await models.User.findByPk(userId);
